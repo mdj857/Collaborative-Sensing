@@ -6,9 +6,9 @@ import os
 import cv2
 
 def clean():
-	for directory in os.walk():
-		for filename in os.listdir(directory):
-			img = cv2.imread(filename,cv2.IMREAD_GRAYSCALE)
-			resized_image = cv2.resize(img, (100, 100))
-			cv2.imwrite(filename+".jpg",resized_image)
+  for filename in os.listdir('.'):
+    if(not 'resize' in filename):
+      img = cv2.imread(filename,cv2.IMREAD_GRAYSCALE)
+      resized_image = cv2.resize(img, (100, 100))
+      cv2.imwrite(filename,resized_image)
 clean()
