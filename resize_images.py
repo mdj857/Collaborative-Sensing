@@ -9,6 +9,6 @@ def clean():
   for filename in os.listdir('.'):
     if(not 'resize' in filename):
       img = cv2.imread(filename,cv2.IMREAD_GRAYSCALE)
-      resized_image = cv2.resize(img, (100, 100))
+      resized_image = cv2.resize(img, (50, 50))
       cv2.imwrite(filename,resized_image)
 clean()
