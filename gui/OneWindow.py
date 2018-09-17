@@ -21,7 +21,7 @@ if __name__ == '__main__':
     if not cap.isOpened():
         sys.exit("Failed to open camera!")
     while True:
-        label3 = tegraCam.read_cam(cap)
+        label3 = Label(image = tegraCam.read_cam(cap))
         label3.place(x=650, y=670)
 
     cap.release()
