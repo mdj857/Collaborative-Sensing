@@ -32,15 +32,13 @@ def open_window(windowName, width, height):
     cv2.moveWindow(windowName, 0, 0)
     cv2.setWindowTitle(windowName, "Camera Demo for Jetson TX2/TX1")
 
-def read_cam(cap):
+def read_cam(windowName, cap):
     showHelp = True
     showFullScreen = False
     helpText = "'Esc' to Quit, 'H' to Toggle Help, 'F' to Toggle Fullscreen"
     font = cv2.FONT_HERSHEY_PLAIN
-    # while True:
-    #     if cv2.getWindowProperty(windowName, 0) < 0: # Check to see if the user closed the window
-    #         # This will fail if the user closed the window; Nasties get printed to the console
-    #         break;
+    if cv2.getWindowProperty(windowName, 0) < 0: # Check to see if the user closed the window
+        return -1;
     ret_val, displayBuf = cap.read();
     if showHelp == True:
         cv2.putText(displayBuf, helpText, (11,20), font, 1.0, (32,32,32), 4, cv2.LINE_AA)

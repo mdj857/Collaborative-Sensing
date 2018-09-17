@@ -25,10 +25,11 @@ if __name__ == '__main__':
     tegraCam.open_window(windowName, 1280, 720)
 
     while True:
-        display = tegraCam.read_cam(cap)
+        display = tegraCam.read_cam(windowName, cap)
+        if(display == -1):
+            break;
         cv2.imshow(windowName, display)
 
     cap.release()
-    root.title(" Collaborative Sensing")
 
     root.mainloop()
