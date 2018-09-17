@@ -13,16 +13,16 @@ class BasicGui(Frame):
         self.pack(fill=BOTH, expand=1)
         Style().configure("TFrame", background="#333")
         size = 600, 350
-        car = Image.open("car.jpg")
-        car = car.resize(size, Image.ANTIALIAS)
-        carTk = ImageTk.PhotoImage(car)
-        label1 = Label(self, image=carTk)
-        label1.image = carTk
-        label1.place(x=0, y=0)
-
-        view = Image.open("selfdriving.jpg")
-        view = view.resize(size, Image.ANTIALIAS)
-        viewTk = ImageTk.PhotoImage(view)
-        label2 = Label(self, image=viewTk)
-        label2.image = viewTk
-        label2.place(x=0, y=350)
+        # car = Image.open("car.jpg")
+        # car = car.resize(size, Image.ANTIALIAS)
+        # carTk = ImageTk.PhotoImage(car)
+        # label1 = Label(self, image=carTk)
+        # label1.image = carTk
+        # label1.place(x=0, y=0)
+        #
+        # view = Image.open("selfdriving.jpg")
+        # view = view.resize(size, Image.ANTIALIAS)
+        # viewTk = ImageTk.PhotoImage(view)
+        # label2 = Label(self, image=viewTk)
+        # label2.image = viewTk
+        # label2.place(x=0, y=350)
