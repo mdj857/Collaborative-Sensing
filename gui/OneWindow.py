@@ -4,6 +4,7 @@ import move
 import tegraCam
 from tkinter.ttk import Label
 import sys
+import cv2
 
 if __name__ == '__main__':
     root = tk.Tk()
@@ -20,9 +21,12 @@ if __name__ == '__main__':
     cap = tegraCam.open_cam_usb(1, 1280, 720)
     if not cap.isOpened():
         sys.exit("Failed to open camera!")
+    windowName = "Collab Sensing"
+    tegraCam.open_window(windowName, 1280, 720)
+
     while True:
-        label3 = Label(image = tegraCam.read_cam(cap))
-        label3.place(x=650, y=670)
+        display = tegraCam.read_cam(cap)
+        cv2.imshow(windowName, display)
 
     cap.release()
     root.title(" Collaborative Sensing")

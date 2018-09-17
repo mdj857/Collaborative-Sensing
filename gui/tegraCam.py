@@ -46,12 +46,3 @@ def read_cam(cap):
         cv2.putText(displayBuf, helpText, (11,20), font, 1.0, (32,32,32), 4, cv2.LINE_AA)
         cv2.putText(displayBuf, helpText, (10,20), font, 1.0, (240,240,240), 1, cv2.LINE_AA)
     return displayBuf
-
-# if __name__ == "__main__":
-#     cap = open_cam_usb(1, 1280, 720)
-#     if not cap.isOpened():
-#         sys.exit("Failed to open camera!")
-#
-#     read_cam(cap)
-#
-#     cap.release()
