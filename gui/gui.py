@@ -1,6 +1,5 @@
 from PIL import Image, ImageTk
 from tkinter import Tk, BOTH
-import tkinter as tk
 from tkinter.ttk import Frame, Label, Style
 
 class BasicGui(Frame):
@@ -11,9 +10,7 @@ class BasicGui(Frame):
         self.initUI()
 
     def initUI(self):
-      
         self.pack(fill=BOTH, expand=1)
-        
         Style().configure("TFrame", background="#333")
         size = 600, 350
         car = Image.open("car.jpg")
