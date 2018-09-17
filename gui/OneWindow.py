@@ -23,12 +23,7 @@ if __name__ == '__main__':
         sys.exit("Failed to open camera!")
     windowName = "Collab Sensing"
     tegraCam.open_window(windowName, 1280, 720)
-
-    while True:
-        display = tegraCam.read_cam(windowName, cap)
-        if(display == -1):
-            break;
-        cv2.imshow(windowName, display)
+    tegraCam.read_cam(windowName, cap)
 
     cap.release()
 

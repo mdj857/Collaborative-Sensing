@@ -12,8 +12,6 @@
 # Written by JK Jung <jkjung13@gmail.com>
 # --------------------------------------------------------
 
-import sys
-import argparse
 import numpy as np
 import cv2
 
@@ -37,10 +35,23 @@ def read_cam(windowName, cap):
     showFullScreen = False
     helpText = "'Esc' to Quit, 'H' to Toggle Help, 'F' to Toggle Fullscreen"
     font = cv2.FONT_HERSHEY_PLAIN
-    if cv2.getWindowProperty(windowName, 0) < 0: # Check to see if the user closed the window
-        return -1;
-    ret_val, displayBuf = cap.read();
-    if showHelp == True:
-        cv2.putText(displayBuf, helpText, (11,20), font, 1.0, (32,32,32), 4, cv2.LINE_AA)
-        cv2.putText(displayBuf, helpText, (10,20), font, 1.0, (240,240,240), 1, cv2.LINE_AA)
-    return displayBuf
+    while True:
+        if cv2.getWindowProperty(windowName, 0) < 0: # Check to see if the user closed the window
+            # This will fail if the user closed the window; Nasties get printed to the console
+            break;
+        ret_val, displayBuf = cap.read();
+        if showHelp == True:
+            cv2.putText(displayBuf, helpText, (11,20), font, 1.0, (32,32,32), 4, cv2.LINE_AA)
+            cv2.putText(displayBuf, helpText, (10,20), font, 1.0, (240,240,240), 1, cv2.LINE_AA)
+        cv2.imshow(windowName, displayBuf)
+        key = cv2.waitKey(10)
+        if key == 27: # ESC key: quit program
+            break
+        elif key == ord('H') or key == ord('h'): # toggle help message
+            showHelp = not showHelp
+        elif key == ord('F') or key == ord('f'): # toggle fullscreen
+            showFullScreen = not showFullScreen
+            if showFullScreen == True:
+                cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+            else:
+                cv2.setWindowProperty(windowName, cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_NORMAL)
