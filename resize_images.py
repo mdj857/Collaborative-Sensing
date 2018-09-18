@@ -10,5 +10,6 @@ def clean():
     if(not 'resize' in filename):
       img = cv2.imread(filename,cv2.IMREAD_GRAYSCALE)
       resized_image = cv2.resize(img, (50, 50))
-      cv2.imwrite(filename,resized_image)
+      newFile = filename.split(".")[0] + ".png"
+      cv2.imwrite(newFile,resized_image)
 clean()
