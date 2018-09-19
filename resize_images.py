@@ -9,7 +9,7 @@ def clean():
   for filename in os.listdir('.'):
     if(not 'resize' in filename):
       img = cv2.imread(filename,cv2.IMREAD_GRAYSCALE)
-      resized_image = cv2.resize(img, (50, 50))
+      #resized_image = cv2.resize(img, (50, 50))
       newFile = filename.split(".")[0] + ".png"
-      cv2.imwrite(newFile,resized_image)
+      cv2.imwrite(newFile,img)
 clean()

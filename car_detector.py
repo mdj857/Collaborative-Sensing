@@ -10,8 +10,11 @@ import numpy as np
 import cv2
 
 rc_car_cascade10 = cv2.CascadeClassifier('rc_car_cascade10.xml')
-
-cap = cv2.VideoCapture(0)
+#cap = cv2.VideoCapture(0)
+gst_str = ("v4l2src device=/dev/video{} ! "
+               "video/x-raw, width=(int){}, height=(int){}, format=(string)RGB ! "
+               "videoconvert ! appsink").format(1, 1280, 720)
+cap = cv2.VideoCapture(gst_str, cv2.CAP_GSTREAMER)
 
 while 1:
     ret, img = cap.read()
