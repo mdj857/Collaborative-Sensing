@@ -19,6 +19,8 @@ class Desktop:
     def stop_move(self, event):
         selected = event.widget.find_withtag("current")[0]
         x1, y1, x2, y2 = self.canvas.coords(selected)
+        x = x1 + 10
+        y = y1 + 10
         self.canvas.itemconfig(
             self.text_id,
             text="Current location:({} {})".format(x, y)
