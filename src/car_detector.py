@@ -9,7 +9,7 @@ Created by Matthew Johnson 09/17/18
 import numpy as np
 import cv2
 
-rc_car_cascade10 = cv2.CascadeClassifier('rc_car_cascade10.xml')
+rc_car_cascade10 = cv2.CascadeClassifier('model/cascade.xml')
 #cap = cv2.VideoCapture(0)
 gst_str = ("v4l2src device=/dev/video{} ! "
                "video/x-raw, width=(int){}, height=(int){}, format=(string)RGB ! "
