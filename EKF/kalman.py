@@ -1,3 +1,4 @@
+import numpy as np
 class Kalman:
 	"""
 	USAGE:
@@ -24,8 +25,13 @@ class Kalman:
 	The text that helped me most with understanding Kalman filters is here:
 	http://www.njfunk.com/research/courses/652-probability-report.pdf
 	"""
-	import numpy as np
-	def __init__(self, state_dim, obs_dim):
+
+	def main(self):
+		state_dim = []
+		obs_dim=[]
+		self.init(state_dim, obs_dim)
+
+	def init(self, state_dim, obs_dim):
 		self.state_dim = state_dim
 		self.obs_dim   = obs_dim
 		
