@@ -17,7 +17,7 @@ lmain1.pack(side=LEFT)
 lmain2.pack(side=RIGHT)
 
 
-cap1 = cv2.VideoCapture(0)
+cap1 = cv2.VideoCapture(2)
 def show_frame1():
     showHelp = True
     showFullScreen = False
@@ -37,8 +37,10 @@ def show_frame1():
 
 
 
-cap2 = cv2.VideoCapture(1)
+cap2 = cv2.VideoCapture(0)
 def show_frame2():
+    if not cap2.isOpened():
+        sys.exit("Failed to open camera 2")
     _, frame = cap2.read()
     # frame = cv2.flip(frame, 1)
     cv2image = cv2.cvtColor(frame, cv2.COLOR_BGR2RGBA)
