@@ -6,10 +6,14 @@ import os
 import cv2
 
 def clean():
+  f = open("info.lst", "w+")
   for filename in os.listdir('.'):
     if(not 'resize' in filename):
       img = cv2.imread(filename,cv2.IMREAD_GRAYSCALE)
-      #resized_image = cv2.resize(img, (50, 50))
-      newFile = filename.split(".")[0] + ".png"
-      cv2.imwrite(newFile,img)
+      if(img is not None):
+        #resized_image = cv2.resize(img, (50, 50))
+        newFile = filename.split(".")[0] + ".png"
+        f.write("pos/" + newFile + " 1 0 0 " + str(img.shape[1])  + " " + str(img.shape[0]))
+        cv2.imwrite(newFile,img)
+  f.close()
 clean()
