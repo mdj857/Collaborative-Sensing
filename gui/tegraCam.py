@@ -28,7 +28,7 @@ def open_window(windowName, width, height):
     cv2.namedWindow(windowName, cv2.WINDOW_NORMAL)
     cv2.resizeWindow(windowName, width, height)
     cv2.moveWindow(windowName, 0, 0)
-    cv2.setWindowTitle(windowName, "Camera Demo for Jetson TX2/TX1")
+    cv2.setWindowTitle(windowName)
 
 def read_cam(windowName, cap):
     showHelp = True

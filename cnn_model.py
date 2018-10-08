@@ -12,8 +12,9 @@ epochs = 10
 img_x, img_y = 128, 128
 
 # TODO: load data and split into train/test. 
-# X sgould be 
-(x_train, y_train), (x_test, y_test) = mnist.load_data()
+# X should be a uint8 array of size (num_samples, img_x, img_y, 3)
+# Y should be a uint8 aray of size (num_samples, 1, 2) (output vectors are of size 1x2)
+
 
 # reshape the data into a 4D tensor - (sample_number, x_img_size, y_img_size, num_channels)
 # because the MNIST is greyscale, we only three channels one for each RGB
@@ -46,7 +47,7 @@ model.add(MaxPooling2D(pool_size=(2, 2)))
 # flatten and add two dense layers to reduce dimensionality to 2
 model.add(Flatten())
 model.add(Dense(1000, activation='relu'))
-model.add(Dense(2))
+model.add(Dense(2,))
 
 model.compile(loss=keras.losses.mean_squared_error,
               optimizer=keras.optimizers.Adam(),
