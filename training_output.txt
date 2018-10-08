@@ -4,7 +4,7 @@ vecFileName: positives.vec
 bgFileName: bg.txt
 numPos: 30
 numNeg: 798
-numStages: 3
+numStages: 5
 precalcValBufSize[Mb] : 1024
 precalcIdxBufSize[Mb] : 1024
 acceptanceRatioBreakValue : -1
@@ -29,3 +29,11 @@ Precalculation time: 29
 +----+---------+---------+
 |  N |    HR   |    FA   |
 +----+---------+---------+
+|   1|        1|        1|
++----+---------+---------+
+|   2|        1|        1|
++----+---------+---------+
+|   3|        1| 0.177945|
++----+---------+---------+
+END>
+Parameters can not be written, because file model/params.xml can not be opened.
