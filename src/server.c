@@ -64,7 +64,7 @@ int recieve_fifo(void *unused){
   return(0);
 }
 
-int main(void){
+int main(int argc, char const *argv[]){
   int fifo = 0;
   int listenfd = 0;
   int contin = 1; 
@@ -74,7 +74,15 @@ int main(void){
   int done = FALSE;
   int numrv;  
   int num_char=0; 
+  char ip_addr[16];
+
+  if(argc != 2){
+    puts("Error please specify the IP address of the server!\nE.G. ./server 192.168.56.101");
+  }
   
+  //process command line arguments
+  strncpy(ip_addr, argv[1], 15); //15 is max chars in IPV4 address
+
   //Transmit FiFo Setup code
   //create fifo, with all permisssions for everyone
   int res = mkfifo("srv_transmit", S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
@@ -94,10 +102,11 @@ int main(void){
   printf("socket retrieve success\n");
   
   memset(&serv_addr, '0', sizeof(serv_addr));
-      
+
   serv_addr.sin_family = AF_INET;    
-  serv_addr.sin_addr.s_addr = htonl(INADDR_ANY); 
-  serv_addr.sin_port = htons(5000);    
+  serv_addr.sin_addr.s_addr = inet_addr(ip_addr);  
+  //new-> 192.168.52.101 old-> INADDR_ANY
+  serv_addr.sin_port = htons(57681);    
  
   bind(listenfd, (struct sockaddr*)&serv_addr,sizeof(serv_addr));
   

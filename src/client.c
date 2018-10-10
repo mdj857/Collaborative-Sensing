@@ -75,7 +75,7 @@ int recieve_fifo(void *unused){
 }
 
 
-int main(void){
+int main(int argc, char const *argv[]){
   int fifo;
   int n = 0;
   char user_input[BUFF_SIZE];  //user input string 
@@ -84,7 +84,19 @@ int main(void){
   int done = FALSE;
   int numrv;
   int num_char=0;
-
+  char *split_string;
+  char ip_addr[16];
+  int port_i;
+  
+  if(argc != 3){
+    puts("Error: Must Specifiy Server IP followed by the port on argument.\nE.G. ./client 192.168.56.101 25565");
+    exit(1);
+  }
+  
+  strncpy(ip_addr, argv[1], 15); //15 is max chars in IPV4 address 
+  port_i = atoi(argv[2]); //convert command line arg into number
+  printf("%s:%d\n", ip_addr, port_i);
+  //TODO: Fix server to work with consistent port, add IP configuration option to command line
 
   if((sockfd = socket(AF_INET, SOCK_STREAM, 0))< 0)
     {
@@ -93,8 +105,8 @@ int main(void){
     }
  
   serv_addr.sin_family = AF_INET;
-  serv_addr.sin_port = htons(5000);
-  serv_addr.sin_addr.s_addr = inet_addr("127.0.0.1");
+  serv_addr.sin_port = htons(port_i);
+  serv_addr.sin_addr.s_addr = inet_addr(ip_addr); //loopback is 127.0.0.1
  
   if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr))<0)
     {
