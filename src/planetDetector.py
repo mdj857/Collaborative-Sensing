@@ -16,7 +16,7 @@ class PlanetDetector:
 
     def __init__(self, model):
         self.model = model
-        self.previous_preds = []
+        self.last_measurement = []
         self.classifier = cv2.CascadeClassifier(self.model)
         #cap = cv2.VideoCapture(0)
         gst_str = ("v4l2src device=/dev/video{} ! "
@@ -36,10 +36,10 @@ class PlanetDetector:
           x,y,w,h = planets[0]
           cv2.rectangle(img,(x,y),(x+w,y+h),(255,255,0),2)
           center_of_mass = (x + w/2, y + h/2)
-          self.previous_preds.append(center_of_mass)
+          self.last_measurement.append(center_of_mass)
           # only keep first two
-          if(len(self.previous_preds) > 2):
-            self.previous_preds.pop(0) 
+          if(len(self.last_measurement) > 2):
+            self.last_measurement.pop(0)
           #print self.previous_preds + '\n'
               
           roi_gray = gray[y:y+h, x:x+w]
@@ -52,8 +52,8 @@ class PlanetDetector:
 
         
 
-    def get_last_two_preds(self):
-        return self.previous_preds
+    def get_last_measurement(self):
+        return self.last_measurement[1]
 
     def __del__(self):
         self.cap.release()
