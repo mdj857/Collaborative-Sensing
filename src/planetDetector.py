@@ -30,7 +30,7 @@ class PlanetDetector:
 
         # add this
         # image, reject levels level weights.
-        planets = self.classifier.detectMultiScale(gray, 50, 50)
+        planets = self.classifier.detectMultiScale(gray, 1.5, 50)
         if(len(planets) != 0):
           # only get first planet, add the prediction to the the queue
           x,y,w,h = planets[0]
