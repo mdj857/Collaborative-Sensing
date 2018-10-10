@@ -1,19 +1,18 @@
-from math import sqrt
+from math import *
 from filterpy.common import Q_discrete_white_noise
 from filterpy.kalman import ExtendedKalmanFilter
 from numpy import eye, array, asarray
 import numpy as np
-from planetDectector import *
+import src.planetDectector as cc
 
-
+constant = 1
 
 def HJacobian_at(x):
     """ compute Jacobian of H matrix at x """
 
-    horiz_dist = x[0]
-    altitude   = x[2]
-    denom = sqrt(horiz_dist**2 + altitude**2)
-    return array([[horiz_dist/denom, 0., altitude/denom]])
+    angular_vel = x[0]
+    angular_pos = x[1]
+    return array([[0, -sin(angular_pos) * constant]])
 
 
 def hx(x):
@@ -21,15 +20,18 @@ def hx(x):
     would correspond to state x.
     """
 
-    return (x[0] ** 2 + x[2] ** 2) ** 0.5
+    return constant * sin(x[1])
 
 
 dt = 0.05
-rk = ExtendedKalmanFilter(dim_x=3, dim_z=1)
-radar = RadarSim(dt, pos=0., vel=100., alt=1000.)
+rk = ExtendedKalmanFilter(dim_x=2, dim_z=1)
+
+#radar = RadarSim(dt, pos=0., vel=100., alt=1000.)
+detector = cc.PlanetDetector('/home/nvidia/OpenCV/Collaborative-Sensing/model/cascade.xml')
 
 # make an imperfect starting guess
-rk.x = array([radar.pos - 100, radar.vel + 100, radar.alt + 1000])
+#rk.x = array([radar.pos - 100, radar.vel + 100, radar.alt + 1000])
+rk.x = array([0, 0, 0])    #need better initial location
 
 rk.F = eye(3) + array([[0, 1, 0],
                        [0, 0, 0],
@@ -42,14 +44,18 @@ rk.Q[2, 2] = 0.1
 rk.P *= 50
 
 xs, track = [], []
-for i in range(int(20 / dt)):
-    z = radar.get_range()
-    track.append((radar.pos, radar.vel, radar.alt))
+#for i in range(int(20 / dt)):
+while 1:
+    #z = radar.get_range()
+    detector.runCascadeClassifier()
+    z = detector.get_last_measurement()
+    #track.append((radar.pos, radar.vel, radar.alt))
 
     rk.update(array([z]), HJacobian_at, hx)
-    xs.append(rk.x)
+    #xs.append(rk.x)
     rk.predict()
+    print(rk.x)
 
-xs = asarray(xs)
-track = asarray(track)
-time = np.arange(0, len(xs) * dt, dt)
+#xs = asarray(xs)
+#track = asarray(track)
+#time = np.arange(0, len(xs) * dt, dt)
