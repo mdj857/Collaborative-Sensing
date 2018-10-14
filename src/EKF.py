@@ -22,6 +22,14 @@ def hx(x):
 
     return constant * cos(x[1])
 
+def get_uncertainty(P):
+    sum =0
+    for row in range(len(P)): 
+        sum += P[row][row]
+    return sum/len(P)
+    
+
+
 
 dt = 0.05
 rk = ExtendedKalmanFilter(dim_x=2, dim_z=1)
@@ -31,7 +39,7 @@ detector = PlanetDetector('C:\\Users\\Phuc Dang\\Desktop\\Developer\\Collaborati
 
 # make an imperfect starting guess
 #rk.x = array([radar.pos - 100, radar.vel + 100, radar.alt + 1000])
-rk.x = array([0, 0])    #need better initial location
+rk.x = array([0, .273])    #need better initial location
 
 rk.F = eye(2) + array([[0, 0],
                        [1, 0]]) * dt
