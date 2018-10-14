@@ -10,8 +10,8 @@ constant = 1
 def HJacobian_at(x):
     """ compute Jacobian of H matrix at x """
 
-    angular_vel = x[0]
-    angular_pos = x[1]
+    angular_vel = x[1]
+    angular_pos = x[0]
     return array([[0., (-1)*np.sin(angular_pos)*constant]])
 
 
@@ -20,7 +20,7 @@ def hx(x):
     would correspond to state x.
     """
 
-    return constant * cos(x[1])
+    return constant * cos(x[0])
 
 def get_uncertainty(P):
     sum =0
