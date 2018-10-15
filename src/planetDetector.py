@@ -12,6 +12,7 @@ Created by Matthew Johnson 09/17/18
 import numpy as np
 import cv2
 
+
 class PlanetDetector:
 
     def __init__(self, model):
@@ -20,11 +21,11 @@ class PlanetDetector:
 	self.prevX = []
 	self.prevY = []
         self.classifier = cv2.CascadeClassifier(self.model)
-        #cap = cv2.VideoCapture(0)
-        gst_str = ("v4l2src device=/dev/video{} ! "
-                       "video/x-raw, width=(int){}, height=(int){}, format=(string)RGB ! "
-                       "videoconvert ! appsink").format(1, 1280, 720)
-        self.cap = cv2.VideoCapture(gst_str, cv2.CAP_GSTREAMER)
+        self.cap = cv2.VideoCapture(0)
+        # gst_str = ("v4l2src device=/dev/video{} ! "
+        #                "video/x-raw, width=(int){}, height=(int){}, format=(string)RGB ! "
+        #                "videoconvert ! appsink").format(1, 1280, 720)
+        # self.cap = cv2.VideoCapture(gst_str, cv2.CAP_GSTREAMER)
 
     def runCascadeClassifier(self):
         ret, img = self.cap.read()
@@ -84,10 +85,15 @@ class PlanetDetector:
         #if k == 27:
         #    break
 
-        
+    def calculateR(self, x, y, sunX, sunY):
+        return ((x-sunX)**2 + (y-sunY)**2)**(1/2)
 
-    def get_last_two_preds(self):
-        return self.previous_preds
+    def get_last_measurement(self):
+        x = self.last_measurement[0][0]
+        y = self.last_measurement[0][1]
+        # TODO: change 0,0 with sun x and y coordinates
+        r = self.calculateR(x, y, 0, 0)
+        return r
 
     def __del__(self):
         self.cap.release()
