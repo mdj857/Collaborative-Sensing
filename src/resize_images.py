@@ -13,7 +13,7 @@ def clean():
       if(img is not None):
         #resized_image = cv2.resize(img, (50, 50))
         newFile = filename.split(".")[0] + ".png"
-        f.write("pos/" + newFile + " 1 0 0 " + str(img.shape[1])  + " " + str(img.shape[0]))
+        f.write("\npos/" + newFile + " 1 0 0 " + str(img.shape[1])  + " " + str(img.shape[0]))
         cv2.imwrite(newFile,img)
   f.close()
 clean()
