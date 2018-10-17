@@ -51,6 +51,7 @@ class PlanetDetector:
         # add this
         # image, reject levels level weights.
         planets = self.classifier.detectMultiScale(s_img, 25, 50)
+	#add here BEST EARTH
 	if(len(planets) != 0):	  
           (x,y,w,h) = planets[0]
           roi_gray = s_gray[y:y+h, x:x+w]
@@ -98,7 +99,7 @@ class PlanetDetector:
 		        fontScale,
 		        gFontColor,
 		        lineType)
-	  cv2.rectangle(s_img,(x,y),(x+w,y+h),(255,255,0),2)
+	  cv2.rectangle(s_img,(x,y),(x+w,y+h),(0,255,0),2)
 	  center_of_mass = (x + w/2, y + h/2)
 	  self.last_measurement.append(center_of_mass)
 	  # only keep first two
@@ -113,8 +114,8 @@ class PlanetDetector:
 	
         cv2.imshow('s_img',s_img)
         k = cv2.waitKey(30) & 0xff
-        #if k == 27:
-        #    break
+        if k == 27:
+          exit(0)
 
     def calculateR(self, x, y, sunX, sunY):
         return ((x-sunX)**2 + (y-sunY)**2)**(1/2)
