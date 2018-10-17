@@ -58,7 +58,8 @@ while 1:
         roi_b = small_i[y:y+h, x:x+w, 0]
         roi_g = small_i[y:y+h, x:x+w, 1]
         roi_r = small_i[y:y+h, x:x+w, 2]
-        if(np.mean(roi_gray) < 100 and np.mean(roi_r) < np.mean(roi_g)):
+        #if(np.mean(roi_gray) < 100 and np.mean(roi_r) < np.mean(roi_g)):
+        if(True):
           i += 1
           if(i>0 and i<10):
 		  if(i == 1):
