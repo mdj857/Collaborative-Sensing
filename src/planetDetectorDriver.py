@@ -4,7 +4,7 @@ detector = PlanetDetector('/home/nvidia/OpenCV/Collaborative-Sensing/old_models/
 #detector = PlanetDetector('/home/nvidia/OpenCV/Collaborative-Sensing/model/cascade.xml')
 while 1:
 	detector.runCascadeClassifier()
-	print detector.get_last_two_preds()
+	print detector.get_last_measurement()
 	#time.sleep(1)
 
 

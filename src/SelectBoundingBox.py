@@ -6,7 +6,11 @@ helpText = "'q' to Quit, 's' to start select bounding box then press enter when 
 help2 = "coordinate print on console"
 font = cv2.FONT_HERSHEY_PLAIN
 
-cap = cv2.VideoCapture(0)
+#cap = cv2.VideoCapture(0)
+gst_str = ("v4l2src device=/dev/video{} ! "
+               "video/x-raw, width=(int){}, height=(int){}, format=(string)RGB ! "
+               "videoconvert ! appsink").format(1, 1280, 720)
+cap = cv2.VideoCapture(gst_str, cv2.CAP_GSTREAMER)
 
 if not cap.isOpened():
     sys.exit("Failed to open camera!")

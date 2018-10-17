@@ -17,20 +17,21 @@ class PlanetDetector:
 
     def __init__(self, model):
         self.model = model
-        self.previous_preds = []
-	self.prevX = []
-	self.prevY = []
+        #self.previous_preds = []
+	#self.prevX = []
+	#self.prevY = []
+	self.last_measurement = []
         self.classifier = cv2.CascadeClassifier(self.model)
-        self.cap = cv2.VideoCapture(0)
-        # gst_str = ("v4l2src device=/dev/video{} ! "
-        #                "video/x-raw, width=(int){}, height=(int){}, format=(string)RGB ! "
-        #                "videoconvert ! appsink").format(1, 1280, 720)
-        # self.cap = cv2.VideoCapture(gst_str, cv2.CAP_GSTREAMER)
+        #self.cap = cv2.VideoCapture(0)
+        gst_str = ("v4l2src device=/dev/video{} ! "
+                       "video/x-raw, width=(int){}, height=(int){}, format=(string)RGB ! "
+                       "videoconvert ! appsink").format(1, 1280, 720)
+        self.cap = cv2.VideoCapture(gst_str, cv2.CAP_GSTREAMER)
 
     def runCascadeClassifier(self):
         ret, img = self.cap.read()
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-        gray = gray[40:-40, 0:-1]
+        #gray = gray[40:-40, 0:-1]
 	s_img = cv2.resize(img, (0,0), fx=0.75, fy=0.75)
 	s_gray = cv2.resize(gray, (0,0), fx = 0.75, fy = 0.75)
 	
@@ -38,7 +39,7 @@ class PlanetDetector:
 	font                   = cv2.FONT_HERSHEY_SIMPLEX
 	bottomLeftCornerOfText = (10,500)
 	fontScale              = 1
-	fontColor              = (255,255,255)
+	fontColor              = (0,0,0)
 	lineType               = 2
 
         # add this
@@ -50,7 +51,7 @@ class PlanetDetector:
           roi_color = s_img[y:y+h, x:x+w]
 	  #print(str(np.mean(roi_gray)))
 	  i=0
-	  while(np.mean(roi_gray) >= 2500):
+	  while(np.mean(roi_gray) >= 100):
 	    if(i < len(planets) - 1):
 	      i+=1
 	      (x,y,w,h) = planets[i]
@@ -72,14 +73,15 @@ class PlanetDetector:
                 lineType)
 	  cv2.rectangle(s_img,(x,y),(x+w,y+h),(255,255,0),2)
 	  center_of_mass = (x + w/2, y + h/2)
-	  self.previous_preds.append(center_of_mass)
+	  self.last_measurement.append(center_of_mass)
 	  # only keep first two
-	  if(len(self.previous_preds) > 2):
-	    self.previous_preds.pop(0) 
+	  if(len(self.last_measurement) > 2):
+	    self.last_measurement.pop(0) 
 	  #print self.previous_preds + '\n'
 	
 	  
-
+	#s_img[:,:,1] = 0
+	#s_img[:,:,2] = 0
         cv2.imshow('s_img',s_img)
         k = cv2.waitKey(30) & 0xff
         #if k == 27:
@@ -89,11 +91,14 @@ class PlanetDetector:
         return ((x-sunX)**2 + (y-sunY)**2)**(1/2)
 
     def get_last_measurement(self):
-        x = self.last_measurement[0][0]
-        y = self.last_measurement[0][1]
-        # TODO: change 0,0 with sun x and y coordinates
-        r = self.calculateR(x, y, 0, 0)
-        return r
+	if(len(self.last_measurement) > 0):
+          x = self.last_measurement[0][0]
+          y = self.last_measurement[0][1]
+          # TODO: change 0,0 with sun x and y coordinates
+          r = self.calculateR(x, y, 0, 0)
+          return r
+	else:
+	  return 0
 
     def __del__(self):
         self.cap.release()
