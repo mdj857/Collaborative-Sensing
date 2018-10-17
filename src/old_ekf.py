@@ -23,7 +23,7 @@ dt = 0.05
 rk = ExtendedKalmanFilter(dim_x=2, dim_z=1)
 
 #radar = RadarSim(dt, pos=0., vel=100., alt=1000.)
-detector = PlanetDetector('../old_models/model_4/cascade.xml')
+detector = PlanetDetector('../old_models/model_4/cascade.xml', False, False)
 
 # make an imperfect starting guess
 #rk.x = array([radar.pos - 100, radar.vel + 100, radar.alt + 1000])
@@ -57,5 +57,5 @@ while 1:
     rk.update(array([z]), HJacobian_at, get_pixel_between_sun_and_planet)
     #xs.append(rk.x)
     rk.predict()
-    print(rk.x)
+    print(rk.P)
     #print(rk.P)
