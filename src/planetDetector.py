@@ -15,8 +15,11 @@ import cv2
 
 class PlanetDetector:
 
-    def __init__(self, model):
+    def __init__(self, model, Test, Eval):
         self.model = model
+	self.Test = Test
+	self.Eval = Eval
+	self.imNo = 0
         #self.previous_preds = []
 	#self.prevX = []
 	#self.prevY = []
@@ -39,7 +42,10 @@ class PlanetDetector:
 	font                   = cv2.FONT_HERSHEY_SIMPLEX
 	bottomLeftCornerOfText = (10,500)
 	fontScale              = 1
-	fontColor              = (0,0,0)
+	fontColor              = (128,128,128)
+	bFontColor             = (255,0,0)
+	rFontColor             = (0,255,0)
+	gFontColor             = (0,0,255)
 	lineType               = 2
 
         # add this
@@ -49,39 +55,62 @@ class PlanetDetector:
           (x,y,w,h) = planets[0]
           roi_gray = s_gray[y:y+h, x:x+w]
           roi_color = s_img[y:y+h, x:x+w]
-	  #print(str(np.mean(roi_gray)))
+          roi_b = s_img[y:y+h, x:x+w, 0]
+          roi_r = s_img[y:y+h, x:x+w, 1]
+          roi_g = s_img[y:y+h, x:x+w, 2]
 	  i=0
-	  while(np.mean(roi_gray) >= 100):
+	  while(np.mean(roi_gray) >= 75 or np.mean(roi_r) < np.mean(roi_g)):
 	    if(i < len(planets) - 1):
 	      i+=1
 	      (x,y,w,h) = planets[i]
               roi_gray = s_gray[y:y+h, x:x+w]
               roi_color = s_img[y:y+h, x:x+w]
+              roi_b = s_img[y:y+h, x:x+w, 0]
+              roi_r = s_img[y:y+h, x:x+w, 1]
+              roi_g = s_img[y:y+h, x:x+w, 2]
 	      
 	    else:
-	        cv2.imshow('s_img',s_img)
-		k = cv2.waitKey(30) & 0xff
-	        return
-         #for (x,y,w,h) in planets:
-          # only get first planet, add the prediction to the the queue
-          #x,y,w,h = planets.pop(0)
-	  cv2.putText(s_img,str(np.mean(roi_gray)), 
-                (x,y), 
-                font, 
-                fontScale,
-                fontColor,
-                lineType)
+              cv2.imshow('s_img',s_img)
+	      k = cv2.waitKey(30) & 0xff
+	      return
+	  if(self.Test):
+		  cv2.putText(s_img,str(int(np.mean(roi_gray))), 
+		        (x,y), 
+		        font, 
+		        fontScale,
+		        fontColor,
+		        lineType)
+		  cv2.putText(s_img,str(int(np.mean(roi_b))), 
+		        (x,y-75), 
+		        font, 
+		        fontScale,
+		        bFontColor,
+		        lineType)
+		  cv2.putText(s_img,str(int(np.mean(roi_r))), 
+		        (x,y-50), 
+		        font, 
+		        fontScale,
+		        rFontColor,
+		        lineType)
+		  cv2.putText(s_img,str(int(np.mean(roi_g))), 
+		        (x,y-25), 
+		        font, 
+		        fontScale,
+		        gFontColor,
+		        lineType)
 	  cv2.rectangle(s_img,(x,y),(x+w,y+h),(255,255,0),2)
 	  center_of_mass = (x + w/2, y + h/2)
 	  self.last_measurement.append(center_of_mass)
 	  # only keep first two
 	  if(len(self.last_measurement) > 2):
-	    self.last_measurement.pop(0) 
-	  #print self.previous_preds + '\n'
+	    self.last_measurement.pop(0)
+	  if(self.Eval):
+	    if(self.imNo < 100):
+  	      print(str(cv2.imwrite('../image_testing/'+str(self.imNo)+'.png', s_img)))
+              self.imNo+=1
+            else:
+              exit(1)
 	
-	  
-	#s_img[:,:,1] = 0
-	#s_img[:,:,2] = 0
         cv2.imshow('s_img',s_img)
         k = cv2.waitKey(30) & 0xff
         #if k == 27:
