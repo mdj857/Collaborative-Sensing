@@ -55,14 +55,19 @@ int transmit_fifo(void *sparkle){
 int recieve_fifo(void *unused){
 
   char recvBuff[BUFF_SIZE];
-
+  int fifo3 = open("cli_recieve", O_WRONLY); //open fifo for reading
+  if(fifo3 == -1){
+    printf("error opening fifo for reading, %d", errno);
+  }
   while(1){
     //monitor network and print recieved message to screen
-    //TODO: replace print with FiFo write
     int num_char = read(sockfd, recvBuff, sizeof(recvBuff));
     recvBuff[num_char] = '\0'; //must add null termination
-    fputs(recvBuff, stdout);
-    puts(" ");
+    puts("Network data recieved. Putting in recieve FiFo");
+    write(fifo3, recvBuff, strlen(recvBuff));
+   // fputs(recvBuff, stdout);
+   // puts(" ");
+    
     //client cannot yet be shutdown over the network...
     //if(!strcmp("done\n", recvBuff)){
       //client tells us that we are done so close connexion
@@ -128,6 +133,21 @@ int main(int argc, char const *argv[]){
     exit(2);
   }
 
+  //Recieve FiFo setup code
+  int res2 = mkfifo("cli_recieve", S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+  if(res2 && (errno != EEXIST)){ //OK if FiFo already exists
+    puts("Error creating the FiFo. Program will now termiate.\n");
+    exit(1);
+  }
+  //open for writing
+  int fifo2 = open("cli_recieve", O_RDWR); //open the fifo for reading and writing 
+  if(fifo == -1){
+    printf("Fifo failed to open, errno %d\n", errno);
+    exit(2);
+  }
+
+
+
    //launch the sending thread
    stack = malloc(STACK_SIZE);
   if(stack == NULL){
@@ -158,10 +178,10 @@ int main(int argc, char const *argv[]){
    while(!done){
      //get user input for message
      //sleep(1);
-     puts("Enter message to send between threads");
-     fgets(user_input, BUFF_SIZE, stdin);
+     //puts("Enter message to send between threads");
+     //fgets(user_input, BUFF_SIZE, stdin);
      //put it in the FiFo 
-     write(fifo, user_input, strlen(user_input));
+     //write(fifo, user_input, strlen(user_input));
      //rinse and repeat.
     }
 
