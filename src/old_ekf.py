@@ -5,18 +5,18 @@ from numpy import eye, array, asarray
 import numpy as np
 from src.planetDetector import *
 
-constant = 0
+#
+d0 = 10
 
 def HJacobian_at(x):
 
     angular_vel = x[1]
     angular_pos = x[0]
-    return array([[0., (-1)*np.sin(angular_pos)*constant]])
+    return array([[0., (-1)*np.sin(angular_pos)*d0]])
 
 
 def get_pixel_between_sun_and_planet(x):
-
-    return constant * cos(x[0])
+    return d0 * cos(x[0])
 
 
 dt = 0.05
