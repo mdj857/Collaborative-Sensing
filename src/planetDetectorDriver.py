@@ -20,8 +20,8 @@ detector = PlanetDetector(
 #detector = PlanetDetector('/home/nvidia/OpenCV/Collaborative-Sensing/model/cascade.xml')
 while 1:
 	detector.runCascadeClassifier()
-	#print detector.imNo
-	#time.sleep(1)
+	print (str(detector.get_last_measurement()))
+	time.sleep(0.05)
 
 
 

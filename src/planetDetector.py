@@ -32,6 +32,16 @@ class PlanetDetector:
 
     def runCascadeClassifier(self):
         ret, img = self.cap.read()
+        cv2.rectangle(img, (390, 140), (710, 460), (0, 255, 255), 2)
+        #sun_img = img[390:710, 140:460]
+        #sun_b = sun_img[0:150, 0:150, 0]
+        #sun_r = sun_img[0:150, 0:150, 1]
+        #sun_g = sun_img[0:150, 0:150, 2]
+        #
+        #print(np.mean(sun_b))
+        #print(np.mean(sun_r))
+        #print(np.mean(sun_g))
+        
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         # gray = gray[40:-40, 0:-1]
         s_img = cv2.resize(img, (0, 0), fx=0.75, fy=0.75)
@@ -58,7 +68,7 @@ class PlanetDetector:
             roi_r = s_img[y:y + h, x:x + w, 1]
             roi_g = s_img[y:y + h, x:x + w, 2]
             i = 0
-            while (np.mean(roi_gray) >= 75 or np.mean(roi_r) < np.mean(roi_g)):
+            while (y > (s_img.shape[0]/2)):
                 if (i < len(planets) - 1):
                     i += 1
                     (x, y, w, h) = planets[i]
@@ -70,7 +80,7 @@ class PlanetDetector:
 
                 else:
                     cv2.imshow('s_img', s_img)
-                    k = cv2.waitKey(30) & 0xff
+                    #k = cv2.waitKey(30) & 0xff
                     return
             if (self.Test):
                 cv2.putText(s_img, str(int(np.mean(roi_gray))),
@@ -111,19 +121,19 @@ class PlanetDetector:
                     exit(1)
 
         cv2.imshow('s_img', s_img)
-        k = cv2.waitKey(30) & 0xff
-        if k == 27:
-            exit(0)
+        #k = cv2.waitKey(30) & 0xff
+        #if k == 27:
+        #    exit(0)
 
     def calculateR(self, x, y, sunX, sunY):
-        return ((x - sunX) ** 2 + (y - sunY) ** 2) ** (1 / 2)
+        return np.sqrt((x - sunX) ** 2 + (y - sunY) ** 2)
 
     def get_last_measurement(self):
         if (len(self.last_measurement) > 0):
             x = self.last_measurement[0][0]
             y = self.last_measurement[0][1]
             # TODO: change 0,0 with sun x and y coordinates
-            r = self.calculateR(x, y, 0, 0)
+            r = self.calculateR(x, y, 465, 215)
             return r
         else:
             return 0
