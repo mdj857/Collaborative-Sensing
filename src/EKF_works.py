@@ -46,7 +46,7 @@ alpha = np.pi/2
 dt = .05
 
 #Init mobile simulator
-mobile = MobileSim(dt, 0., np.pi/11)
+mobile = MobileSim(dt, 0., 2*np.pi/6.55)
 
 #Init extended kalman filter
 rk = ExtendedKalmanFilter(dim_x=2, dim_z=1)
