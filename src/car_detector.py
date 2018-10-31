@@ -10,7 +10,7 @@ import numpy as np
 import cv2
 
 
-rc_car_cascade10 = cv2.CascadeClassifier('/home/nvidia/OpenCV/Collaborative-Sensing/model_better/cascade.xml')
+rc_car_cascade10 = cv2.CascadeClassifier('/home/nvidia/OpenCV/Collaborative-Sensing/model/cascade.xml')
 #/home/nvidia/OpenCV/Collaborative-Sensing/old_models/model_4/cascade.xml')
 #rc_car_cascade10 = cv2.CascadeClassifier('/home/nvidia/OpenCV/Collaborative-Sensing/model/cascade.xml')
 #cap = cv2.VideoCapture(0)
@@ -35,23 +35,18 @@ while 1:
 
     # add this
     # image, reject levels level weights.
-    rc_cars = rc_car_cascade10.detectMultiScale(small, scaleFactor=50, minNeighbors=50)
+    rc_cars = rc_car_cascade10.detectMultiScale(small, scaleFactor=15, minNeighbors=50)
     
     # add this
     i=0
 
     for (x,y,w,h) in rc_cars:
-	i+=1
-        if(i>0 and i<50):
-          cv2.rectangle(small,(x,y),(x+w,y+h),(255,255,0),2)
-          cv2.putText(small,str(i), 
-            (x,y), 
-            font, 
-            fontScale,
-            fontColor,
-            lineType) 
-          roi_gray = gray[y:y+h, x:x+w]
-          roi_color = small[y:y+h, x:x+w]
+		i+=1
+		if(i>0 and i<50 and y < small.shape[0]/3):
+			cv2.rectangle(small,(x,y),(x+w,y+h),(255,255,0),2)
+			
+			roi_gray = gray[y:y+h, x:x+w]
+			roi_color = small[y:y+h, x:x+w]
 
     cv2.imshow('small',small)
     k = cv2.waitKey(30) & 0xff

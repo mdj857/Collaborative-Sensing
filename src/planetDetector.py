@@ -5,13 +5,22 @@ Cascade classifier an attribute of the classifier
 and rectangular boxes are drawn around the predicted
 region(s) of interest. The center of masses of each prediction are recorded for each image frame. 
 the predicted center of mass is given by (x, y) aand these are stashed in the predicted_preds attribute
-
 Created by Matthew Johnson 09/17/18 
 '''
 
 import numpy as np
+import pickle
 import cv2
 
+def planetFilter(planets, height):
+	i=0
+
+	for (x,y,w,h) in planets:
+		i+=1
+		if(i>0 and i<5 and y < height/3):
+			planet = x, y, w, h
+			return planet
+	return None
 
 class PlanetDetector:
     def __init__(self, model, Test, Eval):
@@ -32,7 +41,7 @@ class PlanetDetector:
 
     def runCascadeClassifier(self):
         ret, img = self.cap.read()
-        cv2.rectangle(img, (390, 140), (710, 460), (0, 255, 255), 2)
+        #cv2.rectangle(img, (400, 140), (720, 460), (0, 255, 255), 2)
         #sun_img = img[390:710, 140:460]
         #sun_b = sun_img[0:150, 0:150, 0]
         #sun_r = sun_img[0:150, 0:150, 1]
@@ -44,11 +53,10 @@ class PlanetDetector:
         
         gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         # gray = gray[40:-40, 0:-1]
-        s_img = cv2.resize(img, (0, 0), fx=0.75, fy=0.75)
-        s_gray = cv2.resize(gray, (0, 0), fx=0.75, fy=0.75)
-
+        s_img = cv2.resize(img, (0, 0), fx=0.5, fy=0.5)
+        s_gray = cv2.resize(gray, (0, 0), fx=0.5, fy=0.5)
+	
         font = cv2.FONT_HERSHEY_SIMPLEX
-        bottomLeftCornerOfText = (10, 500)
         fontScale = 1
         fontColor = (128, 128, 128)
         bFontColor = (255, 0, 0)
@@ -58,30 +66,15 @@ class PlanetDetector:
 
         # add this
         # image, reject levels level weights.
-        planets = self.classifier.detectMultiScale(s_img, 25, 50)
-        # add here BEST EARTH
-        if (len(planets) != 0):
-            (x, y, w, h) = planets[0]
+        planets = self.classifier.detectMultiScale(s_gray, 15, 50)
+        earth = planetFilter(planets, s_gray.shape[0])
+        if (earth is not None):
+            (x, y, w, h) = earth
             roi_gray = s_gray[y:y + h, x:x + w]
             roi_color = s_img[y:y + h, x:x + w]
             roi_b = s_img[y:y + h, x:x + w, 0]
             roi_r = s_img[y:y + h, x:x + w, 1]
             roi_g = s_img[y:y + h, x:x + w, 2]
-            i = 0
-            while (y > (s_img.shape[0]/2)):
-                if (i < len(planets) - 1):
-                    i += 1
-                    (x, y, w, h) = planets[i]
-                    roi_gray = s_gray[y:y + h, x:x + w]
-                    roi_color = s_img[y:y + h, x:x + w]
-                    roi_b = s_img[y:y + h, x:x + w, 0]
-                    roi_r = s_img[y:y + h, x:x + w, 1]
-                    roi_g = s_img[y:y + h, x:x + w, 2]
-
-                else:
-                    cv2.imshow('s_img', s_img)
-                    #k = cv2.waitKey(30) & 0xff
-                    return
             if (self.Test):
                 cv2.putText(s_img, str(int(np.mean(roi_gray))),
                             (x, y),
@@ -118,15 +111,17 @@ class PlanetDetector:
                     print(str(cv2.imwrite('../image_testing/' + str(self.imNo) + '.png', s_img)))
                     self.imNo += 1
                 else:
-                    exit(1)
-
-        cv2.imshow('s_img', s_img)
-        #k = cv2.waitKey(30) & 0xff
-        #if k == 27:
-        #    exit(0)
+                	print("")
+                    #exit(1)
+		
+        cv2.imshow('Output', cv2.resize(s_img, (0, 0), fx=2., fy=2.))
+        k = cv2.waitKey(10) & 0xff
+        if k == 27:
+        	exit(0)
 
     def calculateR(self, x, y, sunX, sunY):
-        return np.sqrt((x - sunX) ** 2 + (y - sunY) ** 2)
+        #return np.sqrt((x - sunX) ** 2 + (y - sunY) ** 2)
+        return x-sunX
 
     def get_last_measurement(self):
         if (len(self.last_measurement) > 0):
