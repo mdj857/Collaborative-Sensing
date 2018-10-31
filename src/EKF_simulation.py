@@ -179,7 +179,7 @@ def get_pixel_between_sun_and_planet(x):
 	return p * cos(x[0]) * sin(alpha)
 
 #Number of pixels that represents distance d0
-p = 285
+p = 170
 
 # physical distance between Earth and Sun in a callibrated image
 d0 = 10

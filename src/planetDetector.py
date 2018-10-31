@@ -41,7 +41,7 @@ class PlanetDetector:
 
     def runCascadeClassifier(self):
         ret, img = self.cap.read()
-        #cv2.rectangle(img, (400, 140), (720, 460), (0, 255, 255), 2)
+        #cv2.rectangle(img, (440, 150), (750, 460), (0, 255, 255), 2)
         #sun_img = img[390:710, 140:460]
         #sun_b = sun_img[0:150, 0:150, 0]
         #sun_r = sun_img[0:150, 0:150, 1]
@@ -128,7 +128,7 @@ class PlanetDetector:
             x = self.last_measurement[0][0]
             y = self.last_measurement[0][1]
             # TODO: change 0,0 with sun x and y coordinates
-            r = self.calculateR(x, y, 465, 215)
+            r = self.calculateR(x, y, 295, 153)
             return r
         else:
             return 0
