@@ -22,6 +22,7 @@
 
 
 int connfd=0;
+static int num_to_read = 8;
 
 //thread to read from the fifo and send out the message
 int transmit_fifo(void *sparkle){
@@ -33,11 +34,12 @@ int transmit_fifo(void *sparkle){
    }
    while(1){
       //read and send to client
-      nr = read(fifo2, read_buff, sizeof(read_buff)-1);
+      nr = read(fifo2, read_buff, num_to_read);
       read_buff[nr] = 0; //put termination at end of string
       puts("Transmit FiFo read. Sending to client.");
-      write(connfd, read_buff, strlen(read_buff));
- }
+      int result = write(connfd, read_buff, num_to_read); //should not be using strlen to determine bytes to send TODO: add command line parameter for data to send:
+      printf("Bytes sent %d,", result);
+   }
   puts("shouldn't go here");
   return(0);
 }
@@ -52,10 +54,10 @@ int recieve_fifo(void *unused){
   while(1){
     //monitor network and print recieved message to screen
     //TODO: replace print with FiFo write
-    int num_char = read(connfd, recvBuff, sizeof(recvBuff));
+    int num_char = read(connfd, recvBuff, num_to_read);
     recvBuff[num_char] = '\0'; //must add null termination
     puts("Network data recieved. Putting in recieve FiFo");
-    write(fifo3, recvBuff, strlen(recvBuff));
+    write(fifo3, recvBuff, num_to_read);
     //fputs(recvBuff, stdout);
     //puts(" ");
 
@@ -83,13 +85,20 @@ int main(int argc, char const *argv[]){
   int num_char=0; 
   char ip_addr[16];
 
-  if(argc != 2){
-    puts("Error please specify the IP address of the server!\nE.G. ./server 192.168.56.101");
+  if(argc < 2 || argc > 3){
+    puts("Error please specify the IP address of the server!\nnE.G. ./server 192.168.56.101\nOptionally specify message size for transmission.");
   }
   
   //process command line arguments
   strncpy(ip_addr, argv[1], 15); //15 is max chars in IPV4 address
-
+  if(argc == 3 && argv[2][0]!='0'){  
+    num_to_read = atoi(argv[2]); //TODO: make this idiot proof
+    printf("Message size set to %d bytes\n", num_to_read);
+  }
+  else{
+    puts("Using default message size of 8 bytes.");
+  }
+  
   //Transmit FiFo Setup code
   //create fifo, with all permisssions for everyone
   int res = mkfifo("srv_transmit", S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
@@ -125,7 +134,6 @@ int main(int argc, char const *argv[]){
 
   serv_addr.sin_family = AF_INET;    
   serv_addr.sin_addr.s_addr = inet_addr(ip_addr);  
-  //new-> 192.168.52.101 old-> INADDR_ANY
   serv_addr.sin_port = htons(57681);    
  
   bind(listenfd, (struct sockaddr*)&serv_addr,sizeof(serv_addr));

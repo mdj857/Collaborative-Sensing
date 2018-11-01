@@ -24,6 +24,7 @@
 
 
 int sockfd=0;
+int message_size = 8;
 
 //thread to read from the fifo and send out the message
 int transmit_fifo(void *sparkle){
@@ -35,17 +36,17 @@ int transmit_fifo(void *sparkle){
    }
    while(1){
       //read and send to server
-      nr = read(fifo2, read_buff, sizeof(read_buff)-1);
+      nr = read(fifo2, read_buff, message_size);
       read_buff[nr] = 0; //put termination at end of string
       puts("Transmit FiFo read. Sending to Server.");
-      write(sockfd, read_buff, strlen(read_buff));
-     
-      if(!strcmp("done\n", read_buff)){
+      write(sockfd, read_buff, message_size);
+                
+      //if(!strcmp("done\n", read_buff)){
         //we are done so send the message and then close down
-        puts("Trixie says the client is shutting down.");
-        close(sockfd); //close the current request
-        exit(0); //will this work lol
-      }
+      //  puts("Trixie says the client is shutting down.");
+      //  close(sockfd); //close the current request
+      //  exit(0); //will this work lol
+      //}
 
  }
   puts("shouldn't go here");
@@ -61,10 +62,11 @@ int recieve_fifo(void *unused){
   }
   while(1){
     //monitor network and print recieved message to screen
-    int num_char = read(sockfd, recvBuff, sizeof(recvBuff));
+    int num_char = read(sockfd, recvBuff, message_size);
+    printf("num read is %d\n", num_char);
     recvBuff[num_char] = '\0'; //must add null termination
     puts("Network data recieved. Putting in recieve FiFo");
-    write(fifo3, recvBuff, strlen(recvBuff));
+    write(fifo3, recvBuff, message_size);
    // fputs(recvBuff, stdout);
    // puts(" ");
     
@@ -93,11 +95,17 @@ int main(int argc, char const *argv[]){
   char ip_addr[16];
   int port_i;
   
-  if(argc != 3){
-    puts("Error: Must Specifiy Server IP followed by the port on argument.\nE.G. ./client 192.168.56.101 25565");
+  if(argc < 3 || argc > 4){
+    puts("Error: Must Specifiy Server IP followed by the port on argument.\nE.G. ./client 192.168.56.101 25565\nOptionally set the message size.");
     exit(1);
   }
-  
+  if(argc == 4 && argv[3][0] != '0'){
+    message_size = atoi(argv[3]); //TODO: make this idiot proof
+    printf("Message size set to %d bytes\n", message_size);
+  }
+  else{
+    puts("Using default message size of 8 bytes.");
+  }
   strncpy(ip_addr, argv[1], 15); //15 is max chars in IPV4 address 
   port_i = atoi(argv[2]); //convert command line arg into number
   printf("%s:%d\n", ip_addr, port_i);

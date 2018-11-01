@@ -37,6 +37,7 @@ int recieved_data(void *unused){
 
 
 
+  int rainbowdash = 0;
 
 int main(void){
   char *stack, *stack_top, *stack2;
@@ -80,14 +81,20 @@ int main(void){
     printf("errno %d\n", errno);
     exit(2);
   }
-    
+  int test[2];
  while(1){
      //get user input for message
-     //sleep(1);
-     puts("Enter message to send between threads");
-     fgets(user_input, BUFF_SIZE, stdin);
+     sleep(1);
+     //puts("Enter message to send between threads");
+     //fgets(user_input, BUFF_SIZE, stdin);
      //put it in the FiFo 
-     write(fifo, user_input, strlen(user_input));
+     rainbowdash++;
+     printf("%d", rainbowdash);
+     test[0] = rainbowdash;
+     test[1] = 0;
+     int result = write(fifo, &rainbowdash, sizeof(test));
+     printf("result was %d\n", result); 
+     
      //rinse and repeat.
   }
 

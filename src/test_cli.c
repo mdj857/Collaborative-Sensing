@@ -21,16 +21,18 @@
 int recieved_data(void *unused){
 
   char recvBuff[BUFF_SIZE];
+  int getints[12];
   int fifo3 = open("cli_recieve", O_RDONLY); //open fifo for reading
   if(fifo3 == -1){
     printf("error opening fifo for reading, %d", errno);
   }
   while(1){
     //monitor network and print recieved message to screen
-    int num_char = read(fifo3, recvBuff, sizeof(recvBuff));
-    recvBuff[num_char] = '\0'; //must add null termination
-    fputs(recvBuff, stdout);
-    puts(" ");
+    int num_char = read(fifo3, &getints, 8);
+    //recvBuff[num_char] = '\0'; //must add null termination
+    //fputs(recvBuff, stdout);
+    //puts("PONIEZ ");
+    printf("bytes read:%d, throw away is %d, lower is  %d\n",num_char, getints[1],getints[0]);
   }
   return(0);
 }
@@ -68,18 +70,6 @@ int main(void){
     exit(2);
   }
 
-  //launch the recieving thread  
-  stack2 = malloc(STACK_SIZE);
-  if(stack2 == NULL){
-     exit(3);;
-  }
-  stack_top = stack2 + STACK_SIZE;  /* Assume stack grows toward zero */
-  int nw_thrd2 = clone(&recieved_data, stack_top, CLONE_THREAD|CLONE_SIGHAND|CLONE_VM, stack);
-    if(nw_thrd2 == -1){
-    puts("Thread could not be created...Sorry Twilight... :(");
-    printf("errno %d\n", errno);
-    exit(2);
-  }
     
  while(1){
      //get user input for message
