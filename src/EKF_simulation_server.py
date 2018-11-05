@@ -315,7 +315,7 @@ for a in range(int(testPeriod/dt)):
 	numBytes = os.write(writeFiFo, write_msg)
 	print(numBytes)
 	# TODO: Get Values from read FiFO
-	otherX =  os.read(readFiFo, 128)
+	otherX =  os.read(readFiFo, 32)
 	otherX = otherX.split(";")[0]
 	print("Read From FiFO", otherX)
 
