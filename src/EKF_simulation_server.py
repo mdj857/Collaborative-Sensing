@@ -364,7 +364,7 @@ for a in range(int(testPeriod/dt)):
 	prevOmega = rk.x[0]
 	prevOmegaHat = rk.x[1]
 
-
+'''
 import matplotlib.pyplot as plt
 
 t = np.arange(0, testPeriod, dt)
@@ -388,3 +388,4 @@ plt.subplot(3, 2, 6)
 plt.ylabel('Uncertainty Omega^')
 plt.plot(t, uncertainty2, 'b-')
 plt.show()
+'''

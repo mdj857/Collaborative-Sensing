@@ -339,7 +339,7 @@ for a in range(int(testPeriod/dt)):
 											   np.round(rk.P[1][1], 3), w_sensor2, w_hat_sensor2, w_var_sensor2,
 											   w_hat_var_sensor2)
 
-		print(np.round(w_merge,3), np.round(w_hat_merge,3))
+		#print(np.round(w_merge,3), np.round(w_hat_merge,3))
 	except:
 		pass
 	#prevX = z
