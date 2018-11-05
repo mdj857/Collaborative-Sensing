@@ -37,17 +37,10 @@ int transmit_fifo(void *sparkle){
    while(1){
       //read and send to server
       nr = read(fifo2, read_buff, message_size);
-      read_buff[nr] = 0; //put termination at end of string
-      puts("Transmit FiFo read. Sending to Server.");
-      write(sockfd, read_buff, message_size);
-                
-      //if(!strcmp("done\n", read_buff)){
-        //we are done so send the message and then close down
-      //  puts("Trixie says the client is shutting down.");
-      //  close(sockfd); //close the current request
-      //  exit(0); //will this work lol
-      //}
-
+      if(nr != 0){
+      	puts("Transmit FiFo read. Sending to Server.");
+      	write(sockfd, read_buff, message_size);
+      }
  }
   puts("shouldn't go here");
   return(0);
@@ -64,19 +57,12 @@ int recieve_fifo(void *unused){
     //monitor network and print recieved message to screen
     int num_char = read(sockfd, recvBuff, message_size);
     printf("num read is %d\n", num_char);
-    recvBuff[num_char] = '\0'; //must add null termination
-    puts("Network data recieved. Putting in recieve FiFo");
-    write(fifo3, recvBuff, message_size);
+    if(num_char != 0){
+      puts("Network data recieved. Putting in recieve FiFo");
+      write(fifo3, recvBuff, message_size);
+    }
    // fputs(recvBuff, stdout);
    // puts(" ");
-    
-    //client cannot yet be shutdown over the network...
-    //if(!strcmp("done\n", recvBuff)){
-      //client tells us that we are done so close connexion
-     // puts("Rarity says the sever is closing down");
-      //close(sockfd); //close the current request
-      //exit(0); //will this work lol
-   // }
   }
   return(0);
 }
@@ -135,11 +121,11 @@ int main(int argc, char const *argv[]){
     exit(1);
   }
   //open for writing
-  fifo = open("cli_transmit", O_RDWR); //open the fifo for reading and writing 
-  if(fifo == -1){
-    printf("Fifo failed to open, errno %d\n", errno);
-    exit(2);
-  }
+ // fifo = open("cli_transmit", O_RDWR); //open the fifo for reading and writing 
+ // if(fifo == -1){
+ //   printf("Fifo failed to open, errno %d\n", errno);
+ //   exit(2);
+ // }
 
   //Recieve FiFo setup code
   int res2 = mkfifo("cli_recieve", S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
@@ -148,11 +134,11 @@ int main(int argc, char const *argv[]){
     exit(1);
   }
   //open for writing
-  int fifo2 = open("cli_recieve", O_RDWR); //open the fifo for reading and writing 
-  if(fifo == -1){
-    printf("Fifo failed to open, errno %d\n", errno);
-    exit(2);
-  }
+//  int fifo2 = open("cli_recieve", O_RDWR); //open the fifo for reading and writing 
+ // if(fifo == -1){
+ //   printf("Fifo failed to open, errno %d\n", errno);
+ //   exit(2);
+ // }
 
 
 

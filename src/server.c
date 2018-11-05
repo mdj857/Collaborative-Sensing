@@ -35,11 +35,12 @@ int transmit_fifo(void *sparkle){
    while(1){
       //read and send to client
       nr = read(fifo2, read_buff, num_to_read);
-      read_buff[nr] = 0; //put termination at end of string
-      puts("Transmit FiFo read. Sending to client.");
-      int result = write(connfd, read_buff, num_to_read); //should not be using strlen to determine bytes to send TODO: add command line parameter for data to send:
-      printf("Bytes sent %d,", result);
-   }
+      if(nr != 0){
+         puts("Transmit FiFo read. Sending to client.");
+         int result = write(connfd, read_buff, num_to_read); 
+         printf("Bytes sent %d,", result);
+      } 
+  }
   puts("shouldn't go here");
   return(0);
 }
@@ -53,20 +54,12 @@ int recieve_fifo(void *unused){
   }
   while(1){
     //monitor network and print recieved message to screen
-    //TODO: replace print with FiFo write
     int num_char = read(connfd, recvBuff, num_to_read);
-    recvBuff[num_char] = '\0'; //must add null termination
-    puts("Network data recieved. Putting in recieve FiFo");
-    write(fifo3, recvBuff, num_to_read);
-    //fputs(recvBuff, stdout);
-    //puts(" ");
-
-    if(!strcmp("done\n", recvBuff)){
-      //client tells us that we are done so close connexion
-      puts("Rarity says the sever is closing down");
-      close(connfd); //close the current request
-      exit(0); //will this work lol
-    }   
+    if(num_char != 0){
+      printf("Bytes Recived on Network: %d\n", num_char);
+      puts("Network data recieved. Putting in recieve FiFo");
+      write(fifo3, recvBuff, num_to_read);
+    }
   }
   return(0);
 }
