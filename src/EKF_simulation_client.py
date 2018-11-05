@@ -333,10 +333,11 @@ for a in range(int(testPeriod/dt)):
 	print("Read From FiFO", otherX)
 	otherX = otherX[1:-1]
 	values = otherX.split(',')
-	w_sensor2 = float(values[0])
-	w_hat_sensor2 = float(values[1])
-	w_var_sensor2 = float(values[2])
-	w_hat_var_sensor2 = float(values[3])
+	print(values)
+        w_sensor2 = float(values[1])
+	w_hat_sensor2 = float(values[2])
+	w_var_sensor2 = float(values[3])
+	w_hat_var_sensor2 = float(values[4])
 	print("Parsed vals: ", w_sensor2, w_hat_sensor2, w_var_sensor2, w_hat_var_sensor2)
 	w_merge, w_hat_merge = merge_estimates(np.round(rk.x[0], 3), np.round(rk.x[1], 3), np.round(rk.P[0][0], 3),
 										   np.round(rk.P[1][1], 3), w_sensor2, w_hat_sensor2, w_var_sensor2, w_hat_var_sensor2)
