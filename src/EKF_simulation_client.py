@@ -311,9 +311,9 @@ for a in range(int(testPeriod/dt)):
 	uncertainty2.append((rk.x[1] - prevOmegaHat) * 1.2 * scale / rk.y)
 
 	# TODO: Send Values to write FiFo
-	write_msg = [rk.X[0], rk.X[1], rk.P[0][0], rk.P[1][1]]
-	os.write(writeFiFo, write_msg)
-
+	write_msg = str([rk.x[0], rk.x[1], rk.P[0][0], rk.P[1][1]])
+	numBytes = os.write(writeFiFo, write_msg)
+	print(numBytes)
 	# TODO: Get Values from read FiFO
 	otherX =  os.read(readFiFo, 128)
 	print("Read From FiFO", otherX)
