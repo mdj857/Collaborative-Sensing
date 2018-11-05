@@ -39,6 +39,18 @@ class RadarSim(object):
         
         return slant_dist + err
 
+def merge_estimates(w_sensor1, w_hat_sensor1, w_var_sensor1, w_hat_var_sensor1,
+					w_sensor2, w_hat_sensor2, w_var_sensor2, w_hat_var_sensor2):
+	# compute merged estimate for w
+	a_w = (w_var_sensor1 / (w_var_sensor1 + w_var_sensor2))
+	merged_w = (1 - a_w) * w_sensor1 + a_w * w_sensor2
+
+	# compute merged estimate for w_hat
+	a_w_hat = (w_var_sensor1 / (w_var_sensor1 + w_var_sensor2))
+	merged_w_hat = (1 - a_w_hat) * w_hat_sensor1 + a_w_hat * w_hat_sensor2
+
+	return (merged_w, merged_w_hat)
+
 camData = [110,
 	121,
 	126,
@@ -319,7 +331,16 @@ for a in range(int(testPeriod/dt)):
 	otherX =  os.read(readFiFo, 32)
 	otherX = otherX.split(";")[0]
 	print("Read From FiFO", otherX)
-	
+	values = otherX.split(',')
+	w_sensor2 = float(values[0])
+	w_hat_sensor2 = float(values[1])
+	w_var_sensor2 = float(values[2])
+	w_hat_var_sensor2 = float(values[3])
+	print("Parsed vals: ", w_sensor2, w_hat_sensor2, w_var_sensor2, w_hat_var_sensor2)
+	w_merge, w_hat_merge = merge_estimates(np.round(rk.x[0], 3), np.round(rk.x[1], 3), np.round(rk.P[0][0], 3),
+										   np.round(rk.P[1][1], 3), w_sensor2, w_hat_sensor2, w_var_sensor2, w_hat_var_sensor2)
+
+	print("Merged Pos & Vel: ", w_merge, w_hat_merge)
 	#prevX = z
 	#if(prevX != z):
 		#print(i)
