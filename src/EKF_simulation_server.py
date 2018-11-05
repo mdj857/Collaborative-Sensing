@@ -272,8 +272,8 @@ prevOmega = 0
 prevOmegaHat = 0
 
 
-FIFO_FILENAME = "cli_transmit"
-OTHER_FIFO = "cli_recieve"
+FIFO_FILENAME = "srv_transmit"
+OTHER_FIFO = "srv_recieve"
 
 writeFiFo = os.open(FIFO_FILENAME, os.O_WRONLY)
 print("Open Write Fifo")
@@ -310,14 +310,15 @@ for a in range(int(testPeriod/dt)):
 	#uncertainty2.append(rk.P[1,1])
 	uncertainty2.append((rk.x[1] - prevOmegaHat) * 1.2 * scale / rk.y)
 
-	# TODO: Send Values to write FiFo
-	write_msg = [rk.X[0], rk.X[1], rk.P[0][0], rk.P[1][1]]
-	os.write(writeFiFo, write_msg)
-
+	write_msg = str([np.round(rk.x[0], 3), np.round(rk.x[1], 3), np.round(rk.P[0][0], 3), np.round(rk.P[1][1], 3)])+";"
+	print("Wrote: ", write_msg)
+	numBytes = os.write(writeFiFo, write_msg)
+	print(numBytes)
 	# TODO: Get Values from read FiFO
-	otherX =  os.read(readFiFo, 128)
+	otherX =  os.read(readFiFo, 32)
+	otherX = otherX.split(";")[0]
 	print("Read From FiFO", otherX)
-	
+
 	#prevX = z
 	#if(prevX != z):
 		#print(i)
