@@ -34,11 +34,17 @@ def update_label(root):
         angle.set("Angle: " + str(alpha))
         d.canvas.coords(d.ball, int(r)-10, int(a)-10, int(r)+10, int(a)+10)
         root.after(1000, update)
-        for line in sys.stdin:
-            value.append(line.split())
+        # for line in sys.stdin:
+        #     value.append(line.split())
 
     update()
 
+
+with open("test.txt") as f:
+    lines = (line.rstrip() for line in f)
+    lines = (line for line in lines if line)
+    for line in lines:
+        value.append(line.split())
 
 size = value.__len__()
 root = tk.Tk()
