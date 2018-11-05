@@ -326,19 +326,22 @@ for a in range(int(testPeriod/dt)):
 
 	write_msg = str([np.round(rk.x[0], 3), np.round(rk.x[1], 3), np.round(rk.P[0][0], 3), np.round(rk.P[1][1], 3)]) + ";"
 	numBytes = os.write(writeFiFo, write_msg)
-	otherX = os.read(readFiFo, 50)
+	otherX = os.read(readFiFo, 128)
 	otherX = otherX.split(";")[0]
 	otherX = otherX[1:-1]
 	values = otherX.split(',')
-	w_sensor2 = float(values[0])
-	w_hat_sensor2 = float(values[1])
-	w_var_sensor2 = float(values[2])
-	w_hat_var_sensor2 = float(values[3])
-	w_merge, w_hat_merge = merge_estimates(np.round(rk.x[0], 3), np.round(rk.x[1], 3), np.round(rk.P[0][0], 3),
-										   np.round(rk.P[1][1], 3), w_sensor2, w_hat_sensor2, w_var_sensor2,
-										   w_hat_var_sensor2)
+	try:
+		w_sensor2 = float(values[0])
+		w_hat_sensor2 = float(values[1])
+		w_var_sensor2 = float(values[2])
+		w_hat_var_sensor2 = float(values[3])
+		w_merge, w_hat_merge = merge_estimates(np.round(rk.x[0], 3), np.round(rk.x[1], 3), np.round(rk.P[0][0], 3),
+											   np.round(rk.P[1][1], 3), w_sensor2, w_hat_sensor2, w_var_sensor2,
+											   w_hat_var_sensor2)
 
-	print(np.round(w_merge,3), np.round(w_hat_merge,3))
+		print(np.round(w_merge,3), np.round(w_hat_merge,3))
+	except:
+		pass
 	#prevX = z
 	#if(prevX != z):
 		#print(i)
