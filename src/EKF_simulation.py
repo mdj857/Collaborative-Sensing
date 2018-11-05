@@ -7,6 +7,8 @@ from numpy.random import randn
 import numpy as np
 
 import time
+import os
+import subprocess
 
 class RadarSim(object):
     """ Simulates the radar signal returns from an object
@@ -201,6 +203,7 @@ def get_pixel_between_sun_and_planet(x):
 	#print(np.abs(p * cos(x[0])))
 	return p * cos(x[0])
 
+
 #Number of pixels that represents distance d0
 p = 185
 
@@ -268,6 +271,16 @@ prevX = 0
 prevOmega = 0
 prevOmegaHat = 0
 
+
+FIFO_FILENAME = "cli_transmit"
+OTHER_FIFO = "cli_recieve"
+
+writeFiFo = os.open(FIFO_FILENAME, os.O_WRONLY)
+print("Open Write Fifo")
+readFiFo = os.open(OTHER_FIFO, os.O_RDONLY)
+print("Opened Read Fifo")
+
+
 for a in range(int(testPeriod/dt)):
 	#detector.runCascadeClassifier()
 	z = mobile.get_x_pos() #SIMULATION
@@ -275,6 +288,8 @@ for a in range(int(testPeriod/dt)):
 	#rk.x[0] = rk.x[0] % (2 * np.pi)
 	#rk.update(array([z]), HJacobian_at_test, hx)
 	rk.update(array([z]), HJacobian_at, get_pixel_between_sun_and_planet)
+	rk.predict()
+
 	#mobOmega.append(int(np.degrees(radar.pos)))
 	mobOmega.append(mobile.omega)
 	modOmega.append(rk.x[0])
@@ -294,7 +309,15 @@ for a in range(int(testPeriod/dt)):
 	uncertainty.append(rk.P[0,0])
 	#uncertainty2.append(rk.P[1,1])
 	uncertainty2.append((rk.x[1] - prevOmegaHat) * 1.2 * scale / rk.y)
-	rk.predict()
+
+	# TODO: Send Values to write FiFo
+	write_msg = [rk.X[0], rk.X[1], rk.P[0][0], rk.P[1][1]]
+	os.write(writeFiFo, write_msg)
+
+	# TODO: Get Values from read FiFO
+	otherX =  os.read(readFiFo, 128)
+	print("Read From FiFO", otherX)
+	
 	#prevX = z
 	#if(prevX != z):
 		#print(i)
