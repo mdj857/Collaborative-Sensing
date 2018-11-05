@@ -37,96 +37,121 @@ class RadarSim(object):
         
         return slant_dist + err
 
-camData = [268.7824399,
-		279.4655614,
-		284.4292531,
-		285.7271426,
-		282.1435805,
-		277.61304,
-		269.031596,
-		259.6247292,
-		247.370168,
-		234.1324412,
-		223.8950647,
-		209.954757,
-		209.954757,
-		209.954757,
-		209.954757,
-		209.954757,
-		209.954757,
-		209.954757,
-		209.954757,
-		209.954757,
-		209.954757,
-		209.954757,
-		209.954757,
-		209.954757,
-		196.7358635,
-		103.0970417,
-		120.0708124,
-		130.9809146,
-		154.3016526,
-		169.5670959,
-		184.8377667,
-		201.1019642,
-		215.5411794,
-		215.5411794,
-		215.5411794,
-		215.5411794,
-		226.0486673,
-		218.3048327,
-		182.1482912,
-		171.8167629,
-		213.3775996,
-		136.4734406,
-		178.9413312,
-		178.9413312,
-		178.9413312,
-		178.9413312,
-		178.9413312,
-		178.9413312,
-		178.9413312,
-		157.8131807,
-		157.8131807,
-		197.2536438,
-		200.9601951,
-		228.659135,
-		251.5432368,
-		266.8332813,
-		277.7048793,
-		283.8045102,
-		285.8898389,
-		285.259531,
-		279.594349,
-		271.1401851,
-		261.7250466,
-		250.4595776,
-		237.118114,
-		221.9954954,
-		210.857772,
-		210.857772,
-		210.857772,
-		210.857772,
-		210.857772,
-		210.857772,
-		210.857772,
-		210.857772,
-		210.857772,
-		210.857772,
-		210.857772,
-		210.857772,
-		210.857772,
-		200.6389793,
-		101.9656805,
-		119.0798052,
-		130.9809146,
-		154.175225,
-		170.425937,
-		185.6906029,
-		201.1019642,
-		215.5411794,
-		215.5411794,
-		215.5411794]
+camData = [110,
+	121,
+	126,
+	130,
+	139,
+	148,
+	154,
+	158,
+	163,
+	162,
+	162,
+	157,
+	151,
+	146,
+	137,
+	131,
+	116,
+	103,
+	89,
+	58,
+	24,
+	-1,
+	-26,
+	-26,
+	-26,
+	-26,
+	-26,
+	-54,
+	-155,
+	-166,
+	-179,
+	-183,
+	-183,
+	-183,
+	-180,
+	-174,
+	-168,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-151,
+	105,
+	117,
+	125,
+	128,
+	137,
+	145,
+	151,
+	159,
+	159,
+	162,
+	161,
+	160,
+	153,
+	147,
+	138,
+	133,
+	117,
+	104,
+	60,
+	24,
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	-1,
+	-27,
+	-156,
+	-167,
+	-175,
+	-179,
+	-183,
+	-183,
+	-181,
+	-180,
+	-174,
+	-169,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-151,
+	-151,
+	-151,
+	-151,
+	-151,
+	-151,
+	-151,
+	-151,
+	-151,
+	-151,
+	-151,
+	-151,
+	-151,
+	-151,
+	-81,
+	108]
 
 i=-1
 
@@ -142,17 +167,15 @@ class MobileSim(object):
 		self.omega_hat = self.omega_hat + .00001*randn()
 		
 		#if(self.omega < 50):
-		self.omega = self.omega + self.omega_hat*self.delta
+		self.omega = (self.omega + self.omega_hat*self.delta)
 		#else:
 		#	self.omega = self.omega - self.omega_hat*self.delta
 		#self.omega = self.omega % (2 * np.pi)
-		self.i+=1
-		if(self.i == 90):
-			self.i = 0
+		self.i = (self.i + 1)%115
 		return camData[self.i]
-		err = 0.001*randn()
-		x_pos = d0 / p * cos(self.omega) * sin(alpha)
-		return x_pos + err
+		#err = 0.001*randn()
+		#x_pos =  p * cos(self.omega) * sin(alpha)
+		#return x_pos + err
 
 def HJacobian_at_test(x):
     """ compute Jacobian of H matrix at x """
@@ -172,17 +195,17 @@ def hx(x):
 def HJacobian_at(x):
 	angular_vel = x[1]
 	angular_pos = x[0]
-	return array([[(-1)* sin(alpha) * sin(angular_pos)*p, 0.]])
+	return array([[(-1.0)* sin(angular_pos)*p, 0.]])
 
 def get_pixel_between_sun_and_planet(x):
-	print(np.abs(p * cos(x[0]) * sin(alpha)))
-	return p * cos(x[0]) * sin(alpha)
+	#print(np.abs(p * cos(x[0])))
+	return p * cos(x[0])
 
 #Number of pixels that represents distance d0
-p = 170
+p = 185
 
 # physical distance between Earth and Sun in a callibrated image
-d0 = 10
+d0 = 10.
 
 # angle of elevation from camera to plane of mobile
 alpha = np.pi/2
@@ -211,17 +234,19 @@ rk.F = np.asarray([[1, dt], [0, 1]])
 #                       [0, 0, 0]]) * dt
 
 # measurement noise matrix
-#rk.R = np.diag([(2 * np.pi / 6.55) ** 2])
-rk.R = np.diag([0.1])
-#rk.R = np.diag([(dt ** 2) / 8])
-#rk.R = np.diag([0.01])
+#rk.R = np.diag([3.33 ** 2])
+#rk.R = np.diag([0.1])
+
+#rk.R = np.diag([((d0/p) ** 2) / 8])
+rk.R = np.diag([50])
 
 # process noise -- basically, how close our process (i.e kinematics eqns)
 # model true system behavior
 #--
 #rk.Q = Q_discrete_white_noise(dim=2, dt=dt, var = .1)
-omega_noise = np.pi/2
-rk.Q[0:2, 0:2] = np.array([[omega_noise,0],[0,0.001]])
+omega_noise = np.random.normal(0, np.pi/2)
+#omega_noise =np.random.normal(0, 0.0001)
+rk.Q[0:2, 0:2] = np.array([[omega_noise,0],[0,0.01]])
 #rk.Q[0:2, 0:2] = np.array([[0,0],[0,0]])
 #rk.Q[0:2, 0:2] = Q_discrete_white_noise(2, dt=dt, var=0)
 #rk.Q = np.diag(np.diag(rk.Q)) # Zero out non-diagonal elements
@@ -231,7 +256,8 @@ print("Process noise matrix" , rk.Q)
 
 # covariance matrix -- set initial apriori values for "uncertainty"
 #--
-rk.P *= 0.1
+#rk.P *= 0.01
+rk.P *= 0
 #rk.P *= 2
 
 mobOmega, modOmega, mobOmegaHat , modOmegaHat = [],[],[],[]
@@ -239,8 +265,10 @@ deltaOmega, deltaOmegaHat = [],[]
 uncertainty,uncertainty2 = [],[]
 
 prevX = 0
+prevOmega = 0
+prevOmegaHat = 0
 
-for i in range(int(testPeriod/dt)):
+for a in range(int(testPeriod/dt)):
 	#detector.runCascadeClassifier()
 	z = mobile.get_x_pos() #SIMULATION
 	#z = radar.get_range()
@@ -248,23 +276,32 @@ for i in range(int(testPeriod/dt)):
 	#rk.update(array([z]), HJacobian_at_test, hx)
 	rk.update(array([z]), HJacobian_at, get_pixel_between_sun_and_planet)
 	#mobOmega.append(int(np.degrees(radar.pos)))
-	mobOmega.append(mobile.omega% (2 * np.pi))
-	modOmega.append(rk.x[0]% (2 * np.pi))
-
-	deltaOmega.append(mobile.omega - rk.x[0])
+	mobOmega.append(mobile.omega)
+	modOmega.append(rk.x[0])
+	
+	scale = 1 / (1.2 * HJacobian_at(rk.x)[0][0])
+	
+	#deltaOmega.append(mobile.omega - rk.x[0])
+	deltaOmega.append(0.2 * scale * rk.y)
 
 	#mobOmegaHat.append(int(np.degrees(radar.vel)))
 	mobOmegaHat.append(mobile.omega_hat)
 	modOmegaHat.append(rk.x[1])
 
-	deltaOmegaHat.append(mobile.omega_hat - rk.x[1])
+	#deltaOmegaHat.append(mobile.omega_hat - rk.x[1])
+	deltaOmegaHat.append((rk.x[0] - prevOmega) * 1.2 * scale / rk.y)
 	
 	uncertainty.append(rk.P[0,0])
-	uncertainty2.append(rk.P[1,1])
-	if(prevX != z):
-		print(i)
-		rk.predict()
+	#uncertainty2.append(rk.P[1,1])
+	uncertainty2.append((rk.x[1] - prevOmegaHat) * 1.2 * scale / rk.y)
+	rk.predict()
+	#prevX = z
+	#if(prevX != z):
+		#print(i)
+		#rk.predict()
 	prevX = z
+	prevOmega = rk.x[0]
+	prevOmegaHat = rk.x[1]
 
 
 import matplotlib.pyplot as plt
@@ -275,13 +312,13 @@ plt.ylabel('Omega')
 plt.plot(t, mobOmega, 'r--', t, modOmega, 'b-')
 plt.subplot(3, 2, 2)
 plt.ylabel('Actual - Expected: Omega')
-plt.plot(t, deltaOmega, 'g-')
+plt.plot(t, deltaOmega, 'g.')
 plt.subplot(3, 2, 3)
 plt.ylabel('Omega Hat')
 plt.plot(t, mobOmegaHat, 'r--', t, modOmegaHat, 'b-')
 plt.subplot(3, 2, 4)
 plt.ylabel('Actual - Expected: Omega Hat')
-plt.plot(t, deltaOmegaHat, 'g-')
+plt.plot(t, deltaOmegaHat, 'g.')
 
 plt.subplot(3, 2, 5)
 plt.ylabel('Uncertainty Omega')
