@@ -331,6 +331,7 @@ for a in range(int(testPeriod/dt)):
 	otherX =  os.read(readFiFo, 32)
 	otherX = otherX.split(";")[0]
 	print("Read From FiFO", otherX)
+	otherX = otherX[1:-1]
 	values = otherX.split(',')
 	w_sensor2 = float(values[0])
 	w_hat_sensor2 = float(values[1])
