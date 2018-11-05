@@ -266,7 +266,6 @@ rk.Q[0:2, 0:2] = np.array([[omega_noise,0],[0,0.01]])
 #rk.Q[0:2, 0:2] = Q_discrete_white_noise(2, dt=dt, var=0)
 #rk.Q = np.diag(np.diag(rk.Q)) # Zero out non-diagonal elements
 
-print("Process noise matrix" , rk.Q)
 #--rk.Q = 0
 
 # covariance matrix -- set initial apriori values for "uncertainty"
@@ -288,9 +287,7 @@ FIFO_FILENAME = "cli_transmit"
 OTHER_FIFO = "cli_recieve"
 
 writeFiFo = os.open(FIFO_FILENAME, os.O_WRONLY)
-print("Open Write Fifo")
 readFiFo = os.open(OTHER_FIFO, os.O_RDONLY)
-print("Opened Read Fifo")
 
 
 for a in range(int(testPeriod/dt)):
