@@ -308,10 +308,7 @@ FIFO_FILENAME = "srv_transmit"
 OTHER_FIFO = "srv_recieve"
 
 writeFiFo = os.open(FIFO_FILENAME, os.O_WRONLY)
-print("Open Write Fifo")
 readFiFo = os.open(OTHER_FIFO, os.O_RDONLY)
-print("Opened Read Fifo")
-
 
 for a in range(int(testPeriod/dt)):
 	#detector.runCascadeClassifier()
@@ -343,25 +340,19 @@ for a in range(int(testPeriod/dt)):
 	uncertainty2.append((rk.x[1] - prevOmegaHat) * 1.2 * scale / rk.y)
 
 	write_msg = str([np.round(rk.x[0], 3), np.round(rk.x[1], 3), np.round(rk.P[0][0], 3), np.round(rk.P[1][1], 3)])+";"
-	print("Wrote: ", write_msg)
 	numBytes = os.write(writeFiFo, write_msg)
-	print(numBytes)
 	otherX =  os.read(readFiFo, 50)
 	otherX = otherX.split(";")[0]
-	print("Read From FiFO", otherX)
 	otherX = otherX[1:-1]
 	values = otherX.split(',')
-	print("values pre parse:", values)
 	w_sensor2 = float(values[0])
 	w_hat_sensor2 = float(values[1])
 	w_var_sensor2 = float(values[2])
 	w_hat_var_sensor2 = float(values[3])
-	print('Parsed vals: ', w_sensor2, w_hat_sensor2, w_var_sensor2, w_hat_var_sensor2)
-	print(w_sensor2)
         w_merge, w_hat_merge = merge_estimates(np.round(rk.x[0], 3), np.round(rk.x[1], 3), np.round(rk.P[0][0], 3),
 										   np.round(rk.P[1][1], 3), w_sensor2, w_hat_sensor2, w_var_sensor2, w_hat_var_sensor2)
 
-	print("Merged Pos & Vel: ", w_merge, w_hat_merge)
+	print(np.round(w_merge,3), np.round(w_hat_merge,3))
 	#prevX = z
 	#if(prevX != z):
 		#print(i)
