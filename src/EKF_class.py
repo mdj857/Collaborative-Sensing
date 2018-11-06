@@ -156,7 +156,7 @@ d0 = 10.
 # angle of elevation from camera to plane of mobile
 alpha = np.pi/2
 # sampling rate for images
-dt = 0.05
+dt = 1
 # length of time to analyze for
 testPeriod = 20
 
@@ -211,8 +211,8 @@ class EKF_class:
         self.rk = ExtendedKalmanFilter(dim_x=2, dim_z=1)
         self.initialize_rk()
         # FIFO
-        self.writeFIFO = os.open(FIFO_FILENAME, os.O_WRONLY)
-        self.readFIFO = os.open(OTHER_FIFO, os.O_RDONLY)
+        self.writeFiFo = os.open(FIFO_FILENAME, os.O_WRONLY)
+        self.readFiFo = os.open(OTHER_FIFO, os.O_RDONLY)
 
     def initialize_rk(self):
         # make an imperfect starting guess
@@ -245,7 +245,7 @@ class EKF_class:
         prevOmega = 0
         prevOmegaHat = 0
 
-        for a in range(int(testPeriod / dt)):
+        while(1):
             # detector.runCascadeClassifier()
             z = mobile.get_x_pos()  # SIMULATION
             # z = radar.get_range()
@@ -308,29 +308,6 @@ class EKF_class:
             prevOmega = self.rk.x[0]
             prevOmegaHat = self.rk.x[1]
 
-        import matplotlib.pyplot as plt
-
-        t = np.arange(0, testPeriod, dt)
-        plt.subplot(3, 2, 1)
-        plt.ylabel('Omega')
-        plt.plot(t, mobOmega, 'r--', t, modOmega, 'b-')
-        plt.subplot(3, 2, 2)
-        plt.ylabel('Actual - Expected: Omega')
-        plt.plot(t, deltaOmega, 'g.')
-        plt.subplot(3, 2, 3)
-        plt.ylabel('Omega Hat')
-        plt.plot(t, mobOmegaHat, 'r--', t, modOmegaHat, 'b-')
-        plt.subplot(3, 2, 4)
-        plt.ylabel('Actual - Expected: Omega Hat')
-        plt.plot(t, deltaOmegaHat, 'g.')
-
-        plt.subplot(3, 2, 5)
-        plt.ylabel('Uncertainty Omega')
-        plt.plot(t, uncertainty, 'b-')
-        plt.subplot(3, 2, 6)
-        plt.ylabel('Uncertainty Omega^')
-        plt.plot(t, uncertainty2, 'b-')
-        plt.show()
 
 
 
