@@ -149,6 +149,17 @@ camData = [110,
            -81,
            108]
 
+# Number of pixels that represents distance d0
+p = 185
+# physical distance between Earth and Sun in a callibrated image
+d0 = 10.
+# angle of elevation from camera to plane of mobile
+alpha = np.pi/2
+# sampling rate for images
+dt = 0.05
+# length of time to analyze for
+testPeriod = 20
+
 def merge_estimates(w_sensor1, w_hat_sensor1, w_var_sensor1, w_hat_var_sensor1,
                     w_sensor2, w_hat_sensor2, w_var_sensor2, w_hat_var_sensor2):
     # compute merged estimate for w
@@ -180,13 +191,13 @@ def hx(x):
     return (x[0] ** 2 + x[2] ** 2) ** 0.5
 
 
-def HJacobian_at(x, p):
+def HJacobian_at(x):
     angular_vel = x[1]
     angular_pos = x[0]
     return array([[(-1.0) * sin(angular_pos) * p, 0.]])
 
 
-def get_pixel_between_sun_and_planet(x, p):
+def get_pixel_between_sun_and_planet(x):
     # print(np.abs(p * cos(x[0])))
     return p * cos(x[0])
 
@@ -195,16 +206,7 @@ class EKF_class:
     def __init__(self, planetDetector, FIFO_FILENAME, OTHER_FIFO):
         # Haar classifier
         self.detector = planetDetector
-        # Number of pixels that represents distance d0
-        self.p = 185
-        # physical distance between Earth and Sun in a callibrated image
-        self.d0 = 10.
-        # angle of elevation from camera to plane of mobile
-        self.alpha = np.pi/2
-        # sampling rate for images
-        self.dt = 0.05
-        # length of time to analyze for
-        self.testPeriod = 20
+
         # EKF model
         self.rk = ExtendedKalmanFilter(dim_x=2, dim_z=1)
         self.initialize_rk()
@@ -217,7 +219,7 @@ class EKF_class:
         self.rk.x = array([np.pi / 2, 2 * np.pi / 6.55])
 
         # state transition matrix
-        self.rk.F = np.asarray([[1, self.dt], [0, 1]])
+        self.rk.F = np.asarray([[1, dt], [0, 1]])
 
         # measurement noise matrix
         # self.rk.R = np.diag([((d0/p) ** 2) / 8])
@@ -243,7 +245,7 @@ class EKF_class:
         prevOmega = 0
         prevOmegaHat = 0
 
-        for a in range(int(self.testPeriod / self.dt)):
+        for a in range(int(testPeriod / dt)):
             # detector.runCascadeClassifier()
             z = mobile.get_x_pos()  # SIMULATION
             # z = radar.get_range()
@@ -308,7 +310,7 @@ class EKF_class:
 
         import matplotlib.pyplot as plt
 
-        t = np.arange(0, self.testPeriod, self.dt)
+        t = np.arange(0, testPeriod, dt)
         plt.subplot(3, 2, 1)
         plt.ylabel('Omega')
         plt.plot(t, mobOmega, 'r--', t, modOmega, 'b-')
