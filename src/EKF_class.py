@@ -207,7 +207,7 @@ class EKF_class:
         self.testPeriod = 20
         # EKF model
         self.rk = ExtendedKalmanFilter(dim_x=2, dim_z=1)
-        self.initializeMatrix()
+        self.initialize_rk()
         # FIFO
         self.writeFIFO = os.open(FIFO_FILENAME, os.O_WRONLY)
         self.readFIFO = os.open(OTHER_FIFO, os.O_RDONLY)
