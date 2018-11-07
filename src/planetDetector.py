@@ -23,7 +23,7 @@ def planetFilter(planets, height):
 	return None
 
 class PlanetDetector:
-    def __init__(self, model, Test, Eval):
+    def __init__(self, model, cam, Test, Eval):
         self.model = model
         self.Test = Test
         self.Eval = Eval
@@ -36,7 +36,7 @@ class PlanetDetector:
         # self.cap = cv2.VideoCapture(0)
         gst_str = ("v4l2src device=/dev/video{} ! "
                    "video/x-raw, width=(int){}, height=(int){}, format=(string)RGB ! "
-                   "videoconvert ! appsink").format(1, 1280, 720)
+                   "videoconvert ! appsink").format(cam, 1280, 720)
         self.cap = cv2.VideoCapture(gst_str, cv2.CAP_GSTREAMER)
 
     def runCascadeClassifier(self):

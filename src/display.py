@@ -5,9 +5,9 @@ import numpy as np
 import sys
 from EKF_class import *
 import threading
+from planetDetector import *
 
 rad = 200
-
 class Desktop:
 
     def __init__(self, master):
@@ -47,7 +47,8 @@ r = tk.Label(root, fg="green", textvariable = radius)
 r.pack()
 a = tk.Label(root, fg="green", textvariable = angle)
 a.pack()
-server = EKF_class(0, "srv_transmit", "srv_recieve")
+detector = PlanetDetector('../model/cascade.xml', 2, False, False)
+server = EKF_class(detector, "srv_transmit", "srv_recieve")
 update_label(root, server)
 button = tk.Button(root, text='Stop', width=25, command=root.destroy)
 button.pack()

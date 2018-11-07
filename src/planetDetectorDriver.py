@@ -14,6 +14,7 @@ else:
 
 detector = PlanetDetector(
   '/home/nvidia/OpenCV/Collaborative-Sensing/model/cascade.xml',
+  1,
   Test,
   Eval)
 
