@@ -214,6 +214,14 @@ class EKF_class:
         self.writeFiFo = os.open(FIFO_FILENAME, os.O_WRONLY)
         self.readFiFo = os.open(OTHER_FIFO, os.O_RDONLY)
 
+        if FIFO_FILENAME == "srv_transmit":
+            self.server = True
+        else:
+            self.server = False
+
+        self.omega = self.rk.x[0]
+        self.omega_hat = self.rk.x[1]
+
     def initialize_rk(self):
         # make an imperfect starting guess
         self.rk.x = array([np.pi / 2, 2 * np.pi / 6.55])
@@ -287,19 +295,20 @@ class EKF_class:
             otherX = otherX.split(";")[0]
             otherX = otherX[1:-1]
             values = otherX.split(',')
-            try:
-                w_sensor2 = float(values[0])
-                w_hat_sensor2 = float(values[1])
-                w_var_sensor2 = float(values[2])
-                w_hat_var_sensor2 = float(values[3])
-                w_merge, w_hat_merge = merge_estimates(np.round(self.rk.x[0], 3), np.round(self.rk.x[1], 3),
+            if self.server:
+                try:
+                    w_sensor2 = (float(values[0]) - np.pi/2) % (2 * np.pi)
+                    w_hat_sensor2 = float(values[1])
+                    w_var_sensor2 = float(values[2])
+                    w_hat_var_sensor2 = float(values[3])
+                    self.omega, self.omega_hat = merge_estimates(np.round(self.rk.x[0], 3), np.round(self.rk.x[1], 3),
                                                        np.round(self.rk.P[0][0], 3),
                                                        np.round(self.rk.P[1][1], 3), w_sensor2, w_hat_sensor2, w_var_sensor2,
                                                        w_hat_var_sensor2)
 
             # print(np.round(w_merge,3), np.round(w_hat_merge,3))
-            except:
-                pass
+                except:
+                    pass
             # prevX = z
             # if(prevX != z):
             # print(i)
