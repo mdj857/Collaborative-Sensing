@@ -121,6 +121,7 @@ class PlanetDetector:
 
     def calculateR(self, x, y, sunX, sunY):
         #return np.sqrt((x - sunX) ** 2 + (y - sunY) ** 2)
+        print("Earth: " + str(x) + " SUN:  " + str(sunX))
         return x-sunX
 
     def get_last_measurement(self):
@@ -128,7 +129,7 @@ class PlanetDetector:
             x = self.last_measurement[0][0]
             y = self.last_measurement[0][1]
             # TODO: change 0,0 with sun x and y coordinates
-            r = self.calculateR(x, y, 295, 153)
+            r = self.calculateR(x, y, 300, 151)
             return r
         else:
             return 0

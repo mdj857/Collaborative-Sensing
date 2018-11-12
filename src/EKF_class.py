@@ -10,6 +10,67 @@ import time
 import os
 import subprocess
 
+camData = [163,
+	162,
+	162,
+	157,
+	151,
+	146,
+	137,
+	131,
+	116,
+	103,
+	89,
+	58,
+	24,
+	-1,
+	-26,
+	-26,
+	-26,
+	-26,
+	-26,
+	-54,
+	-155,
+	-166,
+	-179,
+	-183,
+	-183,
+	-183,
+	-180,
+	-174,
+	-168,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-151,
+	105,
+	117,
+	125,
+	128,
+	137,
+	145,
+	151,
+	159,
+	159,
+	162,
+	161,
+	160]
 
 class MobileSim(object):
     def __init__(self, delta, omega, omega_hat):
@@ -19,150 +80,24 @@ class MobileSim(object):
         self.i = 0
 
     def get_x_pos(self):
-        self.omega_hat = self.omega_hat + .00001 * randn()
-
-        # if(self.omega < 50):
-        self.omega = (self.omega + self.omega_hat * self.delta)
-        # else:
-        #	self.omega = self.omega - self.omega_hat*self.delta
-        # self.omega = self.omega % (2 * np.pi)
-        self.i = (self.i + 1) % 115
-        return camData[self.i]
-    # err = 0.001*randn()
-    # x_pos =  p * cos(self.omega) * sin(alpha)
-    # return x_pos + err
-
-
-camData = [110,
-           121,
-           126,
-           130,
-           139,
-           148,
-           154,
-           158,
-           163,
-           162,
-           162,
-           157,
-           151,
-           146,
-           137,
-           131,
-           116,
-           103,
-           89,
-           58,
-           24,
-           -1,
-           -26,
-           -26,
-           -26,
-           -26,
-           -26,
-           -54,
-           -155,
-           -166,
-           -179,
-           -183,
-           -183,
-           -183,
-           -180,
-           -174,
-           -168,
-           -161,
-           -161,
-           -161,
-           -161,
-           -161,
-           -161,
-           -161,
-           -161,
-           -161,
-           -161,
-           -161,
-           -161,
-           -161,
-           -161,
-           -161,
-           -161,
-           -161,
-           -161,
-           -161,
-           -151,
-           105,
-           117,
-           125,
-           128,
-           137,
-           145,
-           151,
-           159,
-           159,
-           162,
-           161,
-           160,
-           153,
-           147,
-           138,
-           133,
-           117,
-           104,
-           60,
-           24,
-           -1,
-           -1,
-           -1,
-           -1,
-           -1,
-           -1,
-           -27,
-           -156,
-           -167,
-           -175,
-           -179,
-           -183,
-           -183,
-           -181,
-           -180,
-           -174,
-           -169,
-           -161,
-           -161,
-           -161,
-           -161,
-           -161,
-           -151,
-           -151,
-           -151,
-           -151,
-           -151,
-           -151,
-           -151,
-           -151,
-           -151,
-           -151,
-           -151,
-           -151,
-           -151,
-           -151,
-           -81,
-           108]
+		self.omega_hat = self.omega_hat + .00001*randn()
+		
+		self.omega = (self.omega + self.omega_hat*self.delta)
+		self.i = (self.i + 1)%len(camData)
+		return camData[self.i]
 
 # Number of pixels that represents distance d0
 p = 185
-# physical distance between Earth and Sun in a callibrated image
-d0 = 10.
-# angle of elevation from camera to plane of mobile
-alpha = np.pi/2
 # sampling rate for images
-dt = 1
+dt = 0.2
 # length of time to analyze for
 testPeriod = 20
 
 def merge_estimates(w_sensor1, w_hat_sensor1, w_var_sensor1, w_hat_var_sensor1,
                     w_sensor2, w_hat_sensor2, w_var_sensor2, w_hat_var_sensor2):
     # compute merged estimate for w
+    w_sensor1 += (np.pi / 2)
+    w_sensor1 = w_sensor1 % (2*np.pi)
     a_w = (w_var_sensor1 / (w_var_sensor1 + w_var_sensor2))
     merged_w = (1 - a_w) * w_sensor1 + a_w * w_sensor2
 
@@ -172,25 +107,6 @@ def merge_estimates(w_sensor1, w_hat_sensor1, w_var_sensor1, w_hat_var_sensor1,
 
     return merged_w, merged_w_hat
 
-
-
-def HJacobian_at_test(x):
-    """ compute Jacobian of H matrix at x """
-
-    horiz_dist = x[0]
-    altitude = x[2]
-    denom = sqrt(horiz_dist ** 2 + altitude ** 2)
-    return array([[horiz_dist / denom, 0., altitude / denom]])
-
-
-def hx(x):
-    """ compute measurement for slant range that
-    would correspond to state x.
-    """
-
-    return (x[0] ** 2 + x[2] ** 2) ** 0.5
-
-
 def HJacobian_at(x):
     angular_vel = x[1]
     angular_pos = x[0]
@@ -198,7 +114,6 @@ def HJacobian_at(x):
 
 
 def get_pixel_between_sun_and_planet(x):
-    # print(np.abs(p * cos(x[0])))
     return p * cos(x[0])
 
 
@@ -224,14 +139,13 @@ class EKF_class:
 
     def initialize_rk(self):
         # make an imperfect starting guess
-        self.rk.x = array([np.pi / 2, 2 * np.pi / 6.55])
+        self.rk.x = array([0, 2 * np.pi / 6.55])
 
         # state transition matrix
         self.rk.F = np.asarray([[1, dt], [0, 1]])
 
         # measurement noise matrix
-        # self.rk.R = np.diag([((d0/p) ** 2) / 8])
-        self.rk.R = np.diag([50])
+        self.rk.R = np.diag([(p ** 2) / 8])
 
         # process noise -- basically, how close our process (i.e kinematics eqns)
         omega_noise = np.random.normal(0, np.pi / 2)
@@ -254,33 +168,16 @@ class EKF_class:
         prevOmegaHat = 0
 
         while(1):
-            # detector.runCascadeClassifier()
-            z = mobile.get_x_pos()  # SIMULATION
+            self.detector.runCascadeClassifier()
+            z = self.detector.get_last_measurement()  # SIMULATION
             # z = radar.get_range()
             # rk.x[0] = rk.x[0] % (2 * np.pi)
             # rk.update(array([z]), HJacobian_at_test, hx)
-            self.rk.update(array([z]), HJacobian_at, get_pixel_between_sun_and_planet)
             self.rk.predict()
-
-            # mobOmega.append(int(np.degrees(radar.pos)))
-            mobOmega.append(mobile.omega)
-            modOmega.append(self.rk.x[0])
-
-            scale = 1 / (1.2 * HJacobian_at(self.rk.x)[0][0])
-
-            # deltaOmega.append(mobile.omega - rk.x[0])
-            deltaOmega.append(0.2 * scale * self.rk.y)
-
-            # mobOmegaHat.append(int(np.degrees(radar.vel)))
-            mobOmegaHat.append(mobile.omega_hat)
-            modOmegaHat.append(self.rk.x[1])
-
-            # deltaOmegaHat.append(mobile.omega_hat - rk.x[1])
-            deltaOmegaHat.append((self.rk.x[0] - prevOmega) * 1.2 * scale / self.rk.y)
-
-            uncertainty.append(self.rk.P[0, 0])
-            # uncertainty2.append(rk.P[1,1])
-            uncertainty2.append((self.rk.x[1] - prevOmegaHat) * 1.2 * scale / self.rk.y)
+            
+            if(prevX != z):
+              self.rk.update(array([z]), HJacobian_at, get_pixel_between_sun_and_planet)
+            prevX = z
 
             # TODO: Send Values to write FiFo
             write_msg = str(
@@ -309,13 +206,6 @@ class EKF_class:
             # print(np.round(w_merge,3), np.round(w_hat_merge,3))
                 except:
                     pass
-            # prevX = z
-            # if(prevX != z):
-            # print(i)
-            # rk.predict()
-            prevX = z
-            prevOmega = self.rk.x[0]
-            prevOmegaHat = self.rk.x[1]
 
 
 

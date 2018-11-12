@@ -152,8 +152,7 @@ camData = [110,
 	-151,
 	-151,
 	-151,
-	-81,
-	108]
+	-81]
 
 i=-1
 
@@ -271,7 +270,7 @@ prevX = 0
 prevOmega = 0
 prevOmegaHat = 0
 
-
+'''
 FIFO_FILENAME = "cli_transmit"
 OTHER_FIFO = "cli_recieve"
 
@@ -279,7 +278,7 @@ writeFiFo = os.open(FIFO_FILENAME, os.O_WRONLY)
 print("Open Write Fifo")
 readFiFo = os.open(OTHER_FIFO, os.O_RDONLY)
 print("Opened Read Fifo")
-
+'''
 
 for a in range(int(testPeriod/dt)):
 	#detector.runCascadeClassifier()
@@ -311,7 +310,7 @@ for a in range(int(testPeriod/dt)):
 	uncertainty2.append((rk.x[1] - prevOmegaHat) * 1.2 * scale / rk.y)
 
 	# TODO: Send Values to write FiFo
-	write_msg = [rk.X[0], rk.X[1], rk.P[0][0], rk.P[1][1]]
+	#write_msg = [rk.X[0], rk.x[1], rk.P[0][0], rk.P[1][1]]
 	os.write(writeFiFo, write_msg)
 
 	# TODO: Get Values from read FiFO
