@@ -1,11 +1,11 @@
-import tkinter as tk
+import Tkinter as tk
 from time import sleep
 from math import *
 import numpy as np
 import sys
-from src.EKF_class import *
+from EKF_class import *
 import threading
-from src.planetDetector import *
+from planetDetector import *
 
 rad = 200
 class Desktop:
