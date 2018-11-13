@@ -95,9 +95,6 @@ testPeriod = 20
 
 def merge_estimates(w_sensor1, w_hat_sensor1, w_var_sensor1, w_hat_var_sensor1,
                     w_sensor2, w_hat_sensor2, w_var_sensor2, w_hat_var_sensor2):
-    # compute merged estimate for w
-    w_sensor1 += (np.pi / 2)
-    w_sensor1 = w_sensor1 % (2*np.pi)
     a_w = (w_var_sensor1 / (w_var_sensor1 + w_var_sensor2))
     merged_w = (1 - a_w) * w_sensor1 + a_w * w_sensor2
 
@@ -133,9 +130,14 @@ class EKF_class:
             self.server = True
         else:
             self.server = False
-
+	
+	#Merge values
         self.omega = self.rk.x[0]
         self.omega_hat = self.rk.x[1]
+	
+	#Client sensor values
+	self.omega_client = self.rk.x[0]
+        self.omega_hat_client = self.rk.x[1]
 
     def initialize_rk(self):
         # make an imperfect starting guess
@@ -192,12 +194,19 @@ class EKF_class:
             otherX = otherX.split(";")[0]
             otherX = otherX[1:-1]
             values = otherX.split(',')
+	    #Update sensor client values
+	    self.omega_client = (float(values[0]) - np.pi/2) % (2 * np.pi)
+            self.omega_hat_client = float(values[1])
+	    
+	    #Compute merge values
             if self.server:
                 try:
+		    #Adjust the client sensor angle	
                     w_sensor2 = (float(values[0]) - np.pi/2) % (2 * np.pi)
                     w_hat_sensor2 = float(values[1])
                     w_var_sensor2 = float(values[2])
                     w_hat_var_sensor2 = float(values[3])
+		    #Update merge value
                     self.omega, self.omega_hat = merge_estimates(np.round(self.rk.x[0], 3), np.round(self.rk.x[1], 3),
                                                        np.round(self.rk.P[0][0], 3),
                                                        np.round(self.rk.P[1][1], 3), w_sensor2, w_hat_sensor2, w_var_sensor2,
