@@ -134,9 +134,9 @@ def omegaDiff(sim, exp):
 	return -100000
 	'''
 	diff = (sim - exp + np.pi) % (2*np.pi) - np.pi
-	if(diff < (-1 * np.pi))
+	if(diff < (-1 * np.pi)):
 	  return diff + (2*np.pi)
-	else
+	else:
 	  return diff
 
 def HJacobian_at(x):
