@@ -15,7 +15,7 @@ class Desktop:
         self.canvas.pack()
         self.ball_server = self.canvas.create_oval(0,0,20,20, fill='red', tags='id')
         self.ball_client = self.canvas.create_oval(0, 0, 20, 20, fill='blue', tags='id')
-        self.ball_merge = self.canvas.create_oval(0, 0, 20, 20, fill='green', tags='id')
+        self.ball_merge = self.canvas.create_oval(0, 0, 20, 20, fill='purple', tags='id')
         self.sun = self.canvas.create_oval(249-10, 249-10, 249 + 10, 249 + 10, fill='yellow', tags='id')
         self.rect = self.canvas.create_rectangle(5,5,500,500)
 

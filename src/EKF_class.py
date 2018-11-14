@@ -95,6 +95,7 @@ testPeriod = 20
 
 def merge_estimates(w_sensor1, w_hat_sensor1, w_var_sensor1, w_hat_var_sensor1,
                     w_sensor2, w_hat_sensor2, w_var_sensor2, w_hat_var_sensor2):
+    w_sensor2 += (np.pi /2)
     a_w = (w_var_sensor1 / (w_var_sensor1 + w_var_sensor2))
     merged_w = (1 - a_w) * w_sensor1 + a_w * w_sensor2
 
@@ -141,7 +142,7 @@ class EKF_class:
 
     def initialize_rk(self):
         # make an imperfect starting guess
-        self.rk.x = array([0, 2 * np.pi / 6.55])
+        self.rk.x = array([0, 2 * np.pi / 7.8])
 
         # state transition matrix
         self.rk.F = np.asarray([[1, dt], [0, 1]])
