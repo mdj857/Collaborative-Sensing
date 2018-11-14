@@ -124,12 +124,12 @@ class MobileSim(object):
 		#return x_pos + err
 
 def omegaDiff(sim, exp):
-	if(-180 < np.abs(sim - exp)):
+	if((-1 * np.pi) < np.abs(sim - exp)):
 		return sim-exp
-	if(-360 < sim-exp and sim-exp < 180):
-		return (sim + 360) - exp
-	if(180 < sim-exp and sim-exp < 360):
-		return np.abs(sim - 360 - exp)
+	if((-2*np.pi) < sim-exp and sim-exp < np.pi):
+		return (sim + (2*np.pi)) - exp
+	if((-1*np.pi) < sim-exp and sim-exp < (2*np.pi)):
+		return np.abs(sim - (2*np.pi) - exp)
 	return -100000
 
 def HJacobian_at(x):
@@ -251,12 +251,18 @@ import matplotlib.pyplot as plt
 t = np.arange(0, testPeriod, dt)
 plt.subplot(2, 3, 4)
 plt.title('Expected Omega')
+plt.xlabel('Time(s)')
+plt.ylabel('Omega(rad)')
 plt.plot(t, mobOmega, 'r--')
 plt.subplot(2, 3, 5)
 plt.title('EKF Estimated Omega')
+plt.xlabel('Time(s)')
+plt.ylabel('Omega(rad)')
 plt.plot(t, modOmega, 'b--')
 plt.subplot(2, 3, 6)
 plt.title('Omega Residual')
+plt.xlabel('Time(s)')
+plt.ylabel('Residual(rad)')
 plt.plot(t, uncertainty, 'g.')
 plt.show()
 '''
