@@ -13,27 +13,37 @@ class Desktop:
     def __init__(self, master):
         self.canvas = tk.Canvas(master, width=500, height=500)
         self.canvas.pack()
-        self.ball = self.canvas.create_oval(0,0,20,20, fill='red', tags='id')
+        self.ball_server = self.canvas.create_oval(0,0,20,20, fill='red', tags='id')
+        self.ball_client = self.canvas.create_oval(0, 0, 20, 20, fill='blue', tags='id')
+        self.ball_merge = self.canvas.create_oval(0, 0, 20, 20, fill='green', tags='id')
         self.sun = self.canvas.create_oval(249-10, 249-10, 249 + 10, 249 + 10, fill='yellow', tags='id')
         self.rect = self.canvas.create_rectangle(5,5,500,500)
 
 
-def convert(alpha):
+def convert(omega):
     #alpha = alpha * np.pi / 180
+    alpha = int(omega) % (2 * np.pi)
     x = 249 + rad * cos(alpha)
     y = 249 + - (rad * sin(alpha))
     return x, y
 
 def update_label(root, server):
     def update():
-        alpha = int(server.rk.x[0]) % (2 * np.pi)
-        r, a = convert(alpha)
+        x, y = convert(server.rk.x[0])
         radius.set("Radius: " + str(rad))
-        angle.set("Angle: " + str(alpha))
-        d.canvas.coords(d.ball, int(r)-10, int(a)-10, int(r)+10, int(a)+10)
-        root.after(1000, update)
+        angle.set("Angle: " + str(int(server.rk.x[0]) % (2 * np.pi)))
+        d.canvas.coords(d.ball_server, int(x)-10, int(y)-10, int(x)+10, int(y)+10)
+
+        x, y = convert(server.omega_client)
+        d.canvas.coords(d.ball_client, int(x) - 10, int(y) - 10, int(x) + 10, int(y) + 10)
+
+        x, y = convert(server.omega)
+        d.canvas.coords(d.ball_merge, int(x) - 10, int(y) - 10, int(x) + 10, int(y) + 10)
+
+        root.after(500, update)
         
     update()
+
 
 def ekf_thread():
 	server.run_EKF()
