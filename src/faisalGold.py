@@ -124,6 +124,7 @@ class MobileSim(object):
 		#return x_pos + err
 
 def omegaDiff(sim, exp):
+	'''
 	if((-1 * np.pi) < np.abs(sim - exp)):
 		return sim-exp
 	if((-2*np.pi) < sim-exp and sim-exp < np.pi):
@@ -131,6 +132,12 @@ def omegaDiff(sim, exp):
 	if((-1*np.pi) < sim-exp and sim-exp < (2*np.pi)):
 		return np.abs(sim - (2*np.pi) - exp)
 	return -100000
+	'''
+	diff = (sim - exp + np.pi) % (2*np.pi) - np.pi
+	if(diff < (-1 * np.pi))
+	  return diff + (2*np.pi)
+	else
+	  return diff
 
 def HJacobian_at(x):
 	angular_vel = x[1]
