@@ -8,35 +8,6 @@ import numpy as np
 
 import time
 
-class RadarSim(object):
-    """ Simulates the radar signal returns from an object
-    flying at a constant altityude and velocity in 1D. 
-    """
-    
-    def __init__(self, dt, pos, vel, alt):
-        self.pos = pos
-        self.vel = vel
-        self.alt = alt
-        self.dt = dt
-        
-    def get_range(self):
-        """ Returns slant range to the object. Call once 
-        for each new measurement at dt time from last call.
-        """
-        
-        # add some process noise to the system
-        self.vel = self.vel  + .1*randn()
-        self.alt = self.alt + .1*randn()
-        if(self.pos > 500):
-        	self.pos = 0
-        self.pos = self.pos + self.vel*self.dt
-    
-        # add measurement noise
-        err = self.pos * 0.05*randn()
-        slant_dist = sqrt(self.pos**2 + self.alt**2)
-        
-        return slant_dist + err
-
 camData = [163,
 	162,
 	162,
@@ -56,7 +27,7 @@ camData = [163,
 	-26,
 	-26,
 	-26,
-	-54,
+	-26,
 	-155,
 	-166,
 	-179,
@@ -85,7 +56,7 @@ camData = [163,
 	-161,
 	-161,
 	-161,
-	-151,
+	-161,
 	105,
 	117,
 	125,
@@ -110,15 +81,15 @@ class MobileSim(object):
 
 	def get_x_pos(self):
 		
-		self.omega_hat = self.omega_hat + .00001*randn()
+		self.omega_hat = self.omega_hat + .01*randn()
 		
 		#if(self.omega < 50):
-		self.omega = (self.omega + self.omega_hat*self.delta / 2)
+		self.omega = (self.omega + self.omega_hat*self.delta)
 		#else:
 		#	self.omega = self.omega - self.omega_hat*self.delta
 		self.omega = self.omega % (2 * np.pi)
 		self.i = (self.i + 1)%len(camData)
-		return camData[self.i]
+		return camData[self.i] +10
 		#err = 0.001*randn()
 		#x_pos =  p * cos(self.omega) * sin(alpha)
 		#return x_pos + err
@@ -149,29 +120,23 @@ def get_pixel_between_sun_and_planet(x):
 	return p * cos(x[0])
 
 #Number of pixels that represents distance d0
-p = 185
-
-# physical distance between Earth and Sun in a callibrated image
-d0 = 10.
-
-# angle of elevation from camera to plane of mobile
-alpha = np.pi/2
+p = 175
 
 # sampling rate for images
 dt = 0.2
 
 #length of time to analyze for
-testPeriod = 120
+testPeriod = 60
 
 #Init mobile simulator
-mobile = MobileSim(dt,0, 2*np.pi/6.55)
-radar = RadarSim(dt, pos=0., vel=100., alt=1000.)
+mobile = MobileSim(dt,0, 2*np.pi/10)
+#radar = RadarSim(dt, pos=0., vel=100., alt=1000.)
 
 #Init extended kalman filter
 rk = ExtendedKalmanFilter(dim_x=2, dim_z=1)
 
 # make an imperfect starting guess
-rk.x = array([0, 2*np.pi/6.55])
+rk.x = array([-55, 0])
 #rk.x = array([radar.pos-100, radar.vel+100, radar.alt+1000])
 
 # state transition matrix
@@ -181,28 +146,20 @@ rk.F = np.asarray([[1, dt], [0, 1]])
 #                       [0, 0, 0]]) * dt
 
 # measurement noise matrix
-#rk.R = np.diag([3.33 ** 2])
-rk.R = np.diag([50])
-
-#rk.R = np.diag([(p ** 2) / 8])
-#rk.R = np.diag([50])
+#rk.R = np.diag([0])
+rk.R = np.diag([(p ** 2)/8])
 
 # process noise -- basically, how close our process (i.e kinematics eqns)
 # model true system behavior
-#--rk.Q = Q_discrete_white_noise(dim=2, dt=dt, var = .1)
-#omega_noise = np.random.normal(np.pi/12, 0)
-omega_noise =np.random.normal(0, 0.0001)
+omega_noise = np.pi/8
 rk.Q[0:2, 0:2] = np.array([[omega_noise,0],[0,0.01]])
-#rk.Q[0:2, 0:2] = np.array([[0,0],[0,0]])
-#rk.Q[0:2, 0:2] = Q_discrete_white_noise(2, dt=dt, var=0)
-#rk.Q = np.diag(np.diag(rk.Q)) # Zero out non-diagonal elements
 
 print("Process noise matrix" , rk.Q)
 #--rk.Q = 0
 
 # covariance matrix -- set initial apriori values for "uncertainty"
 #--
-rk.P *= 0.0001
+rk.P *= 0.1
 #rk.P *= 0
 #rk.P *= 2
 
@@ -226,9 +183,9 @@ for a in range(int(testPeriod/dt)):
 	
 	#mobOmega.append(int(np.degrees(radar.pos)))
 	#mobOmega.append(z)
-	mobOmega.append(mobile.omega % (2*np.pi))
+	mobOmega.append((mobile.omega % (2*np.pi)) )
 	#modOmega.append(get_pixel_between_sun_and_planet(rk.x))
-	modOmega.append(rk.x[0] % (2*np.pi))
+	modOmega.append((rk.x[0] % (2*np.pi)) )
 	
 	#deltaOmega.append(mobile.omega - rk.x[0])
 	simDist.append(get_pixel_between_sun_and_planet([mobile.omega]))
@@ -243,11 +200,14 @@ for a in range(int(testPeriod/dt)):
 	ekfDist.append(get_pixel_between_sun_and_planet(rk.x))
 	
 	uncertainty.append(omegaDiff(mobile.omega, rk.x[0]))
-	uncertainty2.append(get_pixel_between_sun_and_planet(rk.x) - get_pixel_between_sun_and_planet([mobile.omega]))
 	#prevX = z
 	if(prevX != z):
 		#print(i)
+		#uncertainty2.append(get_pixel_between_sun_and_planet(rk.x) - get_pixel_between_sun_and_planet([mobile.omega]))
+		uncertainty2.append(get_pixel_between_sun_and_planet(rk.x) - z)
 		rk.update(array([z]), HJacobian_at, get_pixel_between_sun_and_planet)
+	else:
+		uncertainty2.append(0)
 	prevX = z
 	prevOmega = rk.x[0]
 	prevOmegaHat = rk.x[1]
@@ -255,32 +215,25 @@ for a in range(int(testPeriod/dt)):
 
 import matplotlib.pyplot as plt
 
+
 t = np.arange(0, testPeriod, dt)
-plt.subplot(2, 3, 4)
+plt.subplot(2, 1, 1)
 plt.title('Expected Omega')
 plt.xlabel('Time(s)')
 plt.ylabel('Omega(rad)')
-plt.plot(t, mobOmega, 'r--')
-plt.subplot(2, 3, 5)
-plt.title('EKF Estimated Omega')
-plt.xlabel('Time(s)')
-plt.ylabel('Omega(rad)')
-plt.plot(t, modOmega, 'b--')
-plt.subplot(2, 3, 6)
-plt.title('Omega Residual')
-plt.xlabel('Time(s)')
-plt.ylabel('Residual(rad)')
-plt.plot(t, uncertainty, 'g.')
-plt.show()
-'''
-plt.subplot(2, 3, 4)
+plt.axhline(y=175)
+plt.axhline(y=-175)
+plt.plot(t, ekfDist, 'r.',t, measureDist, 'b.', t, uncertainty2, 'g--')
+plt.subplot(2, 1, 2)
 plt.ylabel('Actual - Expected: Omega Hat')
-plt.plot(t, simDist, 'r--')
-plt.subplot(2, 3, 5)
-plt.ylabel('Uncertainty Omega')
-plt.plot(t, ekfDist, 'b--')
-plt.subplot(2, 3, 6)
-plt.ylabel('Uncertainty Omega^')
-plt.plot(t, uncertainty2, 'g.')
-plt.show()
+plt.axhline(y=np.pi)
+plt.axhline(y=-np.pi)
+plt.plot(t, modOmega, 'r--')
 '''
+plt.subplot(2, 1, 2)
+plt.ylabel('Actual - Expected: Omega Hat')
+plt.axhline(y=np.pi)
+plt.axhline(y=-np.pi)
+plt.plot(t, modOmegaHat, 'r--', t, mobOmegaHat, 'b--')
+'''
+plt.show()

@@ -93,7 +93,7 @@ class PlanetDetector:
                             font,
                             fontScale,
                             rFontColor,
-                            lineType)
+                            lineTypeF)
                 cv2.putText(s_img, str(int(np.mean(roi_g))),
                             (x, y - 25),
                             font,
@@ -121,7 +121,8 @@ class PlanetDetector:
 
     def calculateR(self, x, y, sunX, sunY):
         #return np.sqrt((x - sunX) ** 2 + (y - sunY) ** 2)
-        print("Earth: " + str(x) + " SUN:  " + str(sunX))
+        #print("Earth: " + str(x) + " SUN:  " + str(sunX))
+        print(str(x-sunX))
         return x-sunX
 
     def get_last_measurement(self):
@@ -130,7 +131,7 @@ class PlanetDetector:
             y = self.last_measurement[0][1]
             # TODO: change 0,0 with sun x and y coordinates
             r = self.calculateR(x, y, 300, 151)
-            return r
+            return (r + 10)
         else:
             return 0
 

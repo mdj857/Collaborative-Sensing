@@ -65,16 +65,17 @@ class EKF_class:
 
     def initialize_rk(self):
         # make an imperfect starting guess
-        self.rk.x = array([0, 2 * np.pi / 7.8])
+        self.rk.x = array([0, 2 * np.pi / 6.55])
 
         # state transition matrix
         self.rk.F = np.asarray([[1, dt], [0, 1]])
 
         # measurement noise matrix
-        self.rk.R = np.diag([(p ** 2)/8])
+        self.rk.R = np.diag([50])
 
         # process noise -- basically, how close our process (i.e kinematics eqns)
-        omega_noise = np.pi / 12
+        #omega_noise = np.pi / 12
+        omega_noise = 0
         self.rk.Q[0:2, 0:2] = np.array([[omega_noise, 0], [0, 0.01]])
 
         # covariance matrix -- set initial apriori values for "uncertainty"
@@ -94,10 +95,10 @@ class EKF_class:
             # rk.update(array([z]), HJacobian_at_test, hx)
             self.rk.predict()
             
-            if(self.prevX != z):
+            if(self.prevX != z or self.r):
               self.rk.update(array([z]), HJacobian_at, get_pixel_between_sun_and_planet)
             self.prevX = z
-
+'''
             # TODO: Send Values to write FiFo
             #write_msg = str(
             #    [np.round(self.rk.x[0], 3), np.round(self.rk.x[1], 3), np.round(self.rk.P[0][0], 3), np.round(self.rk.P[1][1], 3)]) + ";"
@@ -130,3 +131,4 @@ class EKF_class:
 	                  w_hat_var_sensor2)
             	except:
 	                pass
+'''	                

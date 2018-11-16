@@ -3,7 +3,7 @@ from time import sleep
 from math import *
 import numpy as np
 import sys
-from EKF_class import *
+from testEKF import *
 import threading
 from planetDetector import *
 
@@ -34,13 +34,13 @@ def update_label(root, server):
         angle.set("Angle: " + str(float(server.rk.x[0]) % (2 * np.pi)))
         d.canvas.coords(d.ball_server, int(x)-10, int(y)-10, int(x)+10, int(y)+10)
 
-        x, y = convert(server.omega_client)
-        d.canvas.coords(d.ball_client, int(x) - 10, int(y) - 10, int(x) + 10, int(y) + 10)
+        #x, y = convert(server.omega_client)
+        #d.canvas.coords(d.ball_client, int(x) - 10, int(y) - 10, int(x) + 10, int(y) + 10)
 
-        x, y = convert(server.omega)
-        d.canvas.coords(d.ball_merge, int(x) - 10, int(y) - 10, int(x) + 10, int(y) + 10)
+        #x, y = convert(server.omega)
+        #d.canvas.coords(d.ball_merge, int(x) - 10, int(y) - 10, int(x) + 10, int(y) + 10)
 
-        root.after(100, update)
+        root.after(50, update)
         
     update()
 
