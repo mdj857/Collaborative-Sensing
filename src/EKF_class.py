@@ -31,7 +31,7 @@ def merge_estimates(w_sensor1, w_hat_sensor1, w_var_sensor1, w_hat_var_sensor1,
 def HJacobian_at(x):
     angular_vel = x[1]
     angular_pos = x[0]
-    return array([[(-1.0) * sin(angular_pos) * p, 0.]])
+    return array([[sin(angular_pos) * p, 0.]])
 
 
 def get_pixel_between_sun_and_planet(x):
@@ -65,7 +65,7 @@ class EKF_class:
 
     def initialize_rk(self):
         # make an imperfect starting guess
-        self.rk.x = array([0, 2 * np.pi / 7.8])
+        self.rk.x = array([0, 2 * np.pi / 10])
 
         # state transition matrix
         self.rk.F = np.asarray([[1, dt], [0, 1]])
@@ -88,13 +88,16 @@ class EKF_class:
         #mobile = MobileSim(0.05, np.pi / 2, 2 * np.pi / 6.55)
         while(1):
             self.detector.runCascadeClassifier()
-            z = self.detector.get_last_measurement()  # SIMULATION
-            # z = radar.get_range()
+            z = self.detector.get_last_measurement()
             self.rk.x[0] = self.rk.x[0] % (2 * np.pi)
-            # rk.update(array([z]), HJacobian_at_test, hx)
             self.rk.predict()
             
-            if(self.prevX != z):
+            
+            zPrime = get_pixel_between_sun_and_planet(self.rk.x)
+            
+            if(self.prevX == z or np.abs(zPrime - z) > 25):
+              print()
+            else:
               self.rk.update(array([z]), HJacobian_at, get_pixel_between_sun_and_planet)
             self.prevX = z
 
