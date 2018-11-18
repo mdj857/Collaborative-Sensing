@@ -580,8 +580,8 @@ class MobileSim(object):
 		#else:
 		#	self.omega = self.omega - self.omega_hat*self.delta
 		self.omega = self.omega % (2 * np.pi)
-		self.i = (self.i + 1)%len(camData3)
-		return camData3[self.i] +10
+		self.i = (self.i + 1)%len(camData)
+		return camData[self.i] +10
 		#err = 0.001*randn()
 		#x_pos =  p * cos(self.omega) * sin(alpha)
 		#return x_pos + err
@@ -606,7 +606,7 @@ p = 175
 dt = 0.2
 
 #length of time to analyze for
-testPeriod = 500
+testPeriod = 120
 
 #Init mobile simulator
 mobile = MobileSim(dt,0, 0)
@@ -623,13 +623,13 @@ rk.x = array([0, 2*np.pi/6.55])
 rk.F = np.asarray([[1, dt], [0, 1]])
 
 # measurement noise matrix
-#rk.R = np.diag([15])
+#rk.R = np.diag([0])
 rk.R = np.diag([(1/8) * dt ** 2])
 
 # process noise -- basically, how close our process (i.e kinematics eqns)
 # model true system behavior
 omega_noise = np.pi/12
-rk.Q[0:2, 0:2] = np.array([[omega_noise,0],[0,0.01]])
+rk.Q[0:2, 0:2] = np.array([[0,0],[0,0.1]])
 
 #print("Process noise matrix" , rk.Q)
 #--rk.Q = 0
@@ -653,12 +653,11 @@ for a in range(int(testPeriod/dt)):
 	rk.predict()
 	
 	rk.x[0] = rk.x[0] % (2*np.pi)
-	
 	#mobOmega.append(int(np.degrees(radar.pos)))
 	#mobOmega.append(z)
 	mobOmega.append((mobile.omega % (2*np.pi)) )
 	#modOmega.append(get_pixel_between_sun_and_planet(rk.x))
-	modOmega.append((rk.x[0] % (2*np.pi)) )
+	
 	
 	#deltaOmega.append(mobile.omega - rk.x[0])
 	simDist.append(get_pixel_between_sun_and_planet([mobile.omega]))
@@ -667,20 +666,23 @@ for a in range(int(testPeriod/dt)):
 
 	#mobOmegaHat.append(int(np.degrees(radar.vel)))
 	mobOmegaHat.append(mobile.omega_hat)
-	modOmegaHat.append(rk.x[1])
 
 	#deltaOmegaHat.append(mobile.omega_hat - rk.x[1])
-	ekfDist.append(get_pixel_between_sun_and_planet(rk.x))
 	
 	uncertainty.append(omegaDiff(mobile.omega, rk.x[0]))
 	#np.abs(z - rk.x[0]) > 100
 	zPrime = get_pixel_between_sun_and_planet(rk.x)
-	#if(prevX == z or np.abs(zPrime - z) > 180):
-	if(np.abs(prevX - z) == 0):
+	if(prevX == z or np.abs(zPrime - z) > p):
+	#if(np.abs(prevX - z) == 0):
 		uncertainty2.append(0)
 	else:
 		uncertainty2.append(get_pixel_between_sun_and_planet(rk.x) - z)
 		rk.update(array([z]), HJacobian_at, get_pixel_between_sun_and_planet)
+
+	dist = get_pixel_between_sun_and_planet(rk.x)
+	ekfDist.append(dist)
+	modOmega.append(-np.arccos(dist/p) )
+	
 	prevX = z
 	prevOmega = rk.x[0]
 	prevOmegaHat = rk.x[1]
@@ -696,7 +698,7 @@ plt.xlabel('Time(s)')
 plt.ylabel('Earth Distance from Sun')
 plt.axhline(y=175)
 plt.axhline(y=-175)
-plt.plot(t, ekfDist, 'r*',t, measureDist, 'b.', t, uncertainty2, 'g--')
+plt.plot(t, ekfDist, 'r*',t, measureDist, 'b.')
 plt.subplot(2, 1, 2)
 plt.ylabel('Omega')
 

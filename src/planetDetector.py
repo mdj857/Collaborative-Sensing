@@ -103,8 +103,8 @@ class PlanetDetector:
             cv2.rectangle(s_img, (x, y), (x + w, y + h), (0, 255, 0), 2)
             h, w, c = s_img.shape
 
-            cv2.line(s_img, (0,h/2), (w,h/2), (0, 255, 255), 2)
-            cv2.line(s_img, (w/2, 0), (w/2,h), (0, 255, 255), 2)
+            #cv2.line(s_img, (0,h/2), (w,h/2), (0, 255, 255), 2)
+            #cv2.line(s_img, (w/2, 0), (w/2,h), (0, 255, 255), 2)
             center_of_mass = (x + w / 2, y + h / 2)
             self.last_measurement.append(center_of_mass)
             # only keep first two
