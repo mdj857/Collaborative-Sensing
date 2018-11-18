@@ -95,7 +95,7 @@ class EKF_class:
             
             zPrime = get_pixel_between_sun_and_planet(self.rk.x)
             
-            if(self.prevX == z or np.abs(zPrime - z) > 25):
+            if(self.prevX == z or np.abs(zPrime - z) > 33):
               print()
             else:
               self.rk.update(array([z]), HJacobian_at, get_pixel_between_sun_and_planet)

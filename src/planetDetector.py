@@ -17,7 +17,7 @@ def planetFilter(planets, height):
 
 	for (x,y,w,h) in planets:
 		i+=1
-		if(i>0 and i<5 and y < height/3):
+		if(i>0 and i<5 and (y+h) < height/2):
 			planet = x, y, w, h
 			return planet
 	return None
@@ -101,6 +101,10 @@ class PlanetDetector:
                             gFontColor,
                             lineType)
             cv2.rectangle(s_img, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            h, w, c = s_img.shape
+
+            cv2.line(s_img, (0,h/2), (w,h/2), (0, 255, 255), 2)
+            cv2.line(s_img, (w/2, 0), (w/2,h), (0, 255, 255), 2)
             center_of_mass = (x + w / 2, y + h / 2)
             self.last_measurement.append(center_of_mass)
             # only keep first two
@@ -112,8 +116,7 @@ class PlanetDetector:
                     self.imNo += 1
                 else:
                 	print("")
-                    #exit(1)
-		
+                    #exit(1)		
         cv2.imshow('Output', cv2.resize(s_img, (0, 0), fx=2., fy=2.))
         k = cv2.waitKey(10) & 0xff
         if k == 27:
@@ -122,7 +125,7 @@ class PlanetDetector:
     def calculateR(self, x, y, sunX, sunY):
         #return np.sqrt((x - sunX) ** 2 + (y - sunY) ** 2)
         #print("Earth: " + str(x) + " SUN:  " + str(sunX))
-        print(str(x-sunX))
+        print(str(x-sunX) + ',')
         return x-sunX
 
     def get_last_measurement(self):

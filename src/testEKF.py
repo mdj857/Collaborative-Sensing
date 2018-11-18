@@ -11,7 +11,7 @@ import os
 import subprocess
 
 # Number of pixels that represents distance d0
-p = 185
+p = 175
 # sampling rate for images
 dt = 0.2
 # length of time to analyze for
@@ -31,7 +31,7 @@ def merge_estimates(w_sensor1, w_hat_sensor1, w_var_sensor1, w_hat_var_sensor1,
 def HJacobian_at(x):
     angular_vel = x[1]
     angular_pos = x[0]
-    return array([[(-1.0) * sin(angular_pos) * p, 0.]])
+    return array([[sin(angular_pos) * p, 0.]])
 
 
 def get_pixel_between_sun_and_planet(x):
@@ -47,8 +47,8 @@ class EKF_class:
         self.rk = ExtendedKalmanFilter(dim_x=2, dim_z=1)
         self.initialize_rk()
         # FIFO
-        self.writeFiFo = os.open(FIFO_FILENAME, os.O_WRONLY)
-        self.readFiFo = os.open(OTHER_FIFO, os.O_RDONLY)
+        #self.writeFiFo = os.open(FIFO_FILENAME, os.O_WRONLY)
+        #self.readFiFo = os.open(OTHER_FIFO, os.O_RDONLY)
 
         if FIFO_FILENAME == "srv_transmit":
             self.server = True
@@ -65,17 +65,16 @@ class EKF_class:
 
     def initialize_rk(self):
         # make an imperfect starting guess
-        self.rk.x = array([0, 2 * np.pi / 6.55])
+        self.rk.x = array([0, 2 * np.pi / 10])
 
         # state transition matrix
         self.rk.F = np.asarray([[1, dt], [0, 1]])
 
         # measurement noise matrix
-        self.rk.R = np.diag([50])
+        self.rk.R = np.diag([(p ** 2)/8])
 
         # process noise -- basically, how close our process (i.e kinematics eqns)
-        #omega_noise = np.pi / 12
-        omega_noise = 0
+        omega_noise = np.pi / 12
         self.rk.Q[0:2, 0:2] = np.array([[omega_noise, 0], [0, 0.01]])
 
         # covariance matrix -- set initial apriori values for "uncertainty"
@@ -95,7 +94,12 @@ class EKF_class:
             # rk.update(array([z]), HJacobian_at_test, hx)
             self.rk.predict()
             
-            if(self.prevX != z or self.r):
+            
+            zPrime = get_pixel_between_sun_and_planet(self.rk.x)
+            
+            if(self.prevX == z or np.abs(zPrime - z) > 25):
+              print()
+            else:
               self.rk.update(array([z]), HJacobian_at, get_pixel_between_sun_and_planet)
             self.prevX = z
 '''

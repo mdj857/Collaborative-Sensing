@@ -32,6 +32,7 @@ def update_label(root, server):
         x, y = convert(server.rk.x[0])
         radius.set("Radius: " + str(rad))
         angle.set("Angle: " + str(float(server.rk.x[0]) % (2 * np.pi)))
+        speed.set("Speed: " + str(float(server.rk.x[1])))
         d.canvas.coords(d.ball_server, int(x)-10, int(y)-10, int(x)+10, int(y)+10)
 
         #x, y = convert(server.omega_client)
@@ -40,7 +41,7 @@ def update_label(root, server):
         #x, y = convert(server.omega)
         #d.canvas.coords(d.ball_merge, int(x) - 10, int(y) - 10, int(x) + 10, int(y) + 10)
 
-        root.after(50, update)
+        root.after(100, update)
         
     update()
 
@@ -51,12 +52,15 @@ def ekf_thread():
 root = tk.Tk()
 radius = tk.StringVar()
 angle = tk.StringVar()
+speed = tk.StringVar()
 d = Desktop(root)
 root.title("Output Display")
 r = tk.Label(root, fg="green", textvariable = radius)
 r.pack()
 a = tk.Label(root, fg="green", textvariable = angle)
 a.pack()
+s = tk.Label(root, fg="green", textvariable = speed)
+s.pack()
 detector = PlanetDetector('../model/cascade.xml', 2, False, False)
 server = EKF_class(detector, "srv_transmit", "srv_recieve")
 update_label(root, server)

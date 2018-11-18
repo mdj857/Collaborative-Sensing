@@ -7,8 +7,69 @@ from numpy.random import randn
 import numpy as np
 
 import time
-
-camData = [163,
+camData3 = [163,
+	162,
+	162,
+	157,
+	151,
+	146,
+	137,
+	131,
+	116,
+	103,
+	89,
+	58,
+	24,
+	-1,
+	-26,
+	-26,
+	-26,
+	-26,
+	-26,
+	-54,
+	-155,
+	-166,
+	-179,
+	-183,
+	-183,
+	-183,
+	-180,
+	-174,
+	-168,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-161,
+	-151,
+	105,
+	117,
+	125,
+	128,
+	137,
+	145,
+	151,
+	159,
+	159,
+	162,
+	161,
+	160]
+	
+camData2 = [163,
 	162,
 	162,
 	157,
@@ -70,6 +131,437 @@ camData = [163,
 	161,
 	160]
 
+camData = [109,
+109,
+130,
+138,
+144,
+150,
+155,
+158,
+156,
+155,
+151,
+145,
+136,
+130,
+121,
+105,
+105,
+97,
+55,
+26,
+3,
+-20,
+-20,
+-20,
+-20,
+-20,
+-46,
+-138,
+-151,
+-161,
+-167,
+-174,
+-176,
+-175,
+-174,
+-170,
+-164,
+-158,
+-151,
+-151,
+-151,
+-151,
+-151,
+-151,
+-151,
+-151,
+-151,
+-151,
+-151,
+-151,
+-151,
+-151,
+-151,
+-151,
+-151,
+-151,
+-151,
+-151,
+-143,
+110,
+119,
+125,
+126,
+131,
+138,
+145,
+153,
+154,
+157,
+156,
+155,
+151,
+145,
+136,
+130,
+121,
+106,
+106,
+96,
+57,
+31,
+9,
+-12,
+-36,
+-36,
+-36,
+-36,
+-36,
+-60,
+-143,
+-155,
+-163,
+-170,
+-174,
+-176,
+-175,
+-174,
+-170,
+-165,
+-158,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-145,
+106,
+114,
+124,
+125,
+128,
+136,
+142,
+149,
+155,
+156,
+157,
+157,
+152,
+149,
+139,
+133,
+125,
+110,
+110,
+99,
+60,
+33,
+10,
+-13,
+-13,
+-13,
+-13,
+-13,
+-38,
+-132,
+-146,
+-157,
+-165,
+-172,
+-175,
+-176,
+-174,
+-173,
+-168,
+-161,
+-155,
+-155,
+-155,
+-155,
+-155,
+-155,
+-155,
+-155,
+-155,
+-155,
+-155,
+-155,
+-155,
+-155,
+-155,
+-155,
+-155,
+-155,
+-155,
+-155,
+-147,
+106,
+114,
+123,
+124,
+128,
+136,
+142,
+148,
+152,
+156,
+157,
+157,
+154,
+151,
+142,
+133,
+130,
+115,
+101,
+101,
+95,
+49,
+24,
+3,
+-19,
+-19,
+-19,
+-19,
+-19,
+-44,
+-133,
+-147,
+-157,
+-165,
+-172,
+-176,
+-176,
+-175,
+-173,
+-169,
+-164,
+-157,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-141,
+108,
+117,
+125,
+126,
+130,
+138,
+144,
+150,
+154,
+157,
+157,
+155,
+151,
+145,
+135,
+131,
+120,
+103,
+103,
+98,
+51,
+23,
+0,
+-22,
+-22,
+-22,
+-22,
+-22,
+-49,
+-138,
+-150,
+-160,
+-168,
+-174,
+-176,
+-175,
+-174,
+-171,
+-166,
+-160,
+-153,
+-153,
+-153,
+-153,
+-153,
+-153,
+-153,
+-153,
+-153,
+-153,
+-153,
+-153,
+-153,
+-153,
+-153,
+-153,
+-153,
+-153,
+-153,
+-153,
+-145,
+107,
+116,
+125,
+125,
+130,
+136,
+143,
+149,
+154,
+158,
+159,
+156,
+152,
+148,
+140,
+132,
+127,
+113,
+113,
+113,
+100,
+45,
+21,
+-1,
+-23,
+-23,
+-23,
+-23,
+-23,
+-47,
+-135,
+-148,
+-158,
+-166,
+-172,
+-176,
+-176,
+-175,
+-173,
+-168,
+-162,
+-157,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-149,
+-141,
+110,
+120,
+125,
+126,
+132,
+140,
+147,
+151,
+154,
+157,
+156,
+153,
+150,
+142,
+134,
+130,
+115,
+100,
+100,
+92,
+42,
+18,
+-5,
+-27,
+-27,
+-27,
+-27,
+-27,
+-54,
+-140,
+-153,
+-161,
+-169,
+-173,
+-176,
+-175,
+-174,
+-170,
+-165,
+-158,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-152,
+-144]
+
 i=-1
 
 class MobileSim(object):
@@ -88,22 +580,13 @@ class MobileSim(object):
 		#else:
 		#	self.omega = self.omega - self.omega_hat*self.delta
 		self.omega = self.omega % (2 * np.pi)
-		self.i = (self.i + 1)%len(camData)
-		return camData[self.i] +10
+		self.i = (self.i + 1)%len(camData3)
+		return camData3[self.i] +10
 		#err = 0.001*randn()
 		#x_pos =  p * cos(self.omega) * sin(alpha)
 		#return x_pos + err
 
 def omegaDiff(sim, exp):
-	'''
-	if((-1 * np.pi) < np.abs(sim - exp)):
-		return sim-exp
-	if((-2*np.pi) < sim-exp and sim-exp < np.pi):
-		return (sim + (2*np.pi)) - exp
-	if((-1*np.pi) < sim-exp and sim-exp < (2*np.pi)):
-		return np.abs(sim - (2*np.pi) - exp)
-	return -100000
-	'''
 	diff = (sim - exp + np.pi) % (2*np.pi) - np.pi
 	if(diff < (-1 * np.pi)):
 	  return diff + (2*np.pi)
@@ -111,12 +594,9 @@ def omegaDiff(sim, exp):
 	  return diff
 
 def HJacobian_at(x):
-	angular_vel = x[1]
-	angular_pos = x[0]
-	return array([[(-1.0)* sin(angular_pos)*p, 0.]])
+	return array([[(-1.0)* sin(x[0])*p, 0.]])
 
 def get_pixel_between_sun_and_planet(x):
-	#print(np.abs(p * cos(x[0])))
 	return p * cos(x[0])
 
 #Number of pixels that represents distance d0
@@ -126,35 +606,32 @@ p = 175
 dt = 0.2
 
 #length of time to analyze for
-testPeriod = 60
+testPeriod = 500
 
 #Init mobile simulator
-mobile = MobileSim(dt,0, 2*np.pi/10)
+mobile = MobileSim(dt,0, 0)
 #radar = RadarSim(dt, pos=0., vel=100., alt=1000.)
 
 #Init extended kalman filter
 rk = ExtendedKalmanFilter(dim_x=2, dim_z=1)
 
 # make an imperfect starting guess
-rk.x = array([-55, 0])
+rk.x = array([0, 2*np.pi/6.55])
 #rk.x = array([radar.pos-100, radar.vel+100, radar.alt+1000])
 
 # state transition matrix
 rk.F = np.asarray([[1, dt], [0, 1]])
-#rk.F = eye(3) + array([[0, 1, 0],
-#                       [0, 0, 0],
-#                       [0, 0, 0]]) * dt
 
 # measurement noise matrix
-#rk.R = np.diag([0])
-rk.R = np.diag([(p ** 2)/8])
+#rk.R = np.diag([15])
+rk.R = np.diag([(1/8) * dt ** 2])
 
 # process noise -- basically, how close our process (i.e kinematics eqns)
 # model true system behavior
-omega_noise = np.pi/8
+omega_noise = np.pi/12
 rk.Q[0:2, 0:2] = np.array([[omega_noise,0],[0,0.01]])
 
-print("Process noise matrix" , rk.Q)
+#print("Process noise matrix" , rk.Q)
 #--rk.Q = 0
 
 # covariance matrix -- set initial apriori values for "uncertainty"
@@ -172,11 +649,7 @@ prevOmega = 0
 
 prevOmegaHat = 0
 for a in range(int(testPeriod/dt)):
-	#detector.runCascadeClassifier()
 	z = mobile.get_x_pos() #SIMULATION
-	#z = radar.get_range()
-	#rk.x[0] = rk.x[0] % (2 * np.pi)
-	#rk.update(array([z]), HJacobian_at_test, hx)
 	rk.predict()
 	
 	rk.x[0] = rk.x[0] % (2*np.pi)
@@ -200,14 +673,14 @@ for a in range(int(testPeriod/dt)):
 	ekfDist.append(get_pixel_between_sun_and_planet(rk.x))
 	
 	uncertainty.append(omegaDiff(mobile.omega, rk.x[0]))
-	#prevX = z
-	if(prevX != z):
-		#print(i)
-		#uncertainty2.append(get_pixel_between_sun_and_planet(rk.x) - get_pixel_between_sun_and_planet([mobile.omega]))
+	#np.abs(z - rk.x[0]) > 100
+	zPrime = get_pixel_between_sun_and_planet(rk.x)
+	#if(prevX == z or np.abs(zPrime - z) > 180):
+	if(np.abs(prevX - z) == 0):
+		uncertainty2.append(0)
+	else:
 		uncertainty2.append(get_pixel_between_sun_and_planet(rk.x) - z)
 		rk.update(array([z]), HJacobian_at, get_pixel_between_sun_and_planet)
-	else:
-		uncertainty2.append(0)
 	prevX = z
 	prevOmega = rk.x[0]
 	prevOmegaHat = rk.x[1]
@@ -220,14 +693,13 @@ t = np.arange(0, testPeriod, dt)
 plt.subplot(2, 1, 1)
 plt.title('Expected Omega')
 plt.xlabel('Time(s)')
-plt.ylabel('Omega(rad)')
+plt.ylabel('Earth Distance from Sun')
 plt.axhline(y=175)
 plt.axhline(y=-175)
-plt.plot(t, ekfDist, 'r.',t, measureDist, 'b.', t, uncertainty2, 'g--')
+plt.plot(t, ekfDist, 'r*',t, measureDist, 'b.', t, uncertainty2, 'g--')
 plt.subplot(2, 1, 2)
-plt.ylabel('Actual - Expected: Omega Hat')
-plt.axhline(y=np.pi)
-plt.axhline(y=-np.pi)
+plt.ylabel('Omega')
+
 plt.plot(t, modOmega, 'r--')
 '''
 plt.subplot(2, 1, 2)
